@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Verse;
 
-// ReSharper disable once CheckNamespace
 namespace Compilatron
 {
 	// ReSharper disable once UnusedType.Global

@@ -5,7 +5,6 @@ using RimWorld.Planet;
 using UnityEngine;
 using Verse;
 
-// ReSharper disable once CheckNamespace
 namespace Compilatron
 {
 	public class CompPowerTracker : ThingComp

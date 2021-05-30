@@ -5,7 +5,6 @@ using RimWorld;
 using Verse;
 using UnityEngine;
 
-// ReSharper disable once CheckNamespace
 namespace Compilatron
 {
     // ReSharper disable once UnusedType.Global
