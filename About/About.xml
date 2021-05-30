@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+	<name>Power Tab</name>
+	<author>Compilatron</author>
+	<packageId>Compilatron.PowerTab</packageId>
+	<description>Handy inspector tab for checking the status of your power network.
+	
+Power tab adds in an inspector tab, selectable on any conduit, which will show the output of every power producer, consumer and battery on the power network.
+
+Planned additions include line graphs for historical power values, warnings for when power consumption exceed power production, warnings for when battery storage is too low to sustain a network over night, and various doodads and stats to make power network maintainence easier.
+
+This mod has no dependencies, and can be installed anywhere in your load order. Free your modlist!
+
+Be sure to inform me if you have any bugs, suggestions, questions or otherwise, I'd love the feedback!
+	</description>
+	<supportedVersions>
+		<li>1.0</li>
+		<li>1.1</li>
+		<li>1.2</li>
+	</supportedVersions>
+</ModMetaData>

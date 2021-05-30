@@ -1,0 +1,9 @@
+.git/
+Assemblies/
+Source/.idea/
+Source/.vs/
+Source/bin/
+Source/obj/
+
+.gitattributes
+*.user
