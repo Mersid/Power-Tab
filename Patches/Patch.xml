@@ -6,11 +6,17 @@
 			<li Class="Compilatron.CompPropertiesPowerTracker" />
 		</value>
 	</Operation>
-	<Operation Class="PatchOperationAdd">
-		<xpath>Defs/ThingDef[comps/li[@Class = "Rimefeller.CompProperties_PowerPlant"]]/comps</xpath>
-		<value>
-			<li Class="Compilatron.CompPropertiesPowerTracker" />
-		</value>
+	<Operation Class="PatchOperationFindMod">
+		<mods>
+			<li>Rimefeller</li>
+		</mods>
+		<match Class="PatchOperationAdd">
+			<xpath>Defs/ThingDef[comps/li[@Class = "Rimefeller.CompProperties_PowerPlant"]]/comps</xpath>
+			<value>
+				<li Class="Compilatron.CompPropertiesPowerTracker" />
+			</value>
+		</match>
+		
 	</Operation>
 	<Operation Class="PatchOperationAdd">
 		<xpath>Defs/ThingDef[comps/li[@Class = "CompProperties_Battery"]]/comps</xpath>
