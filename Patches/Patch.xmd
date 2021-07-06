@@ -6,6 +6,7 @@
 			<li Class="Compilatron.CompPropertiesPowerTracker" />
 		</value>
 	</Operation>
+	
 	<Operation Class="PatchOperationFindMod">
 		<mods>
 			<li>Rimefeller</li>

@@ -4,6 +4,7 @@ Source/.idea/
 Source/.vs/
 Source/bin/
 Source/obj/
+Source/packages/
 
 .gitattributes
 *.user
