@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HarmonyLib;
@@ -20,11 +21,13 @@ namespace Compilatron
 
 	//[HarmonyPatch(typeof(Thing))]
 	//[HarmonyPatch("GetInspectTabs")]
+	
 	[HarmonyPatch(typeof(MainTabWindow_Inspect))]
 	[HarmonyPatch(MethodType.Getter)]
 	[HarmonyPatch("CurTabs")]
 	public class Patch
 	{
+		private static PowerTab powerTab = new PowerTab();
 		private static void Postfix(InspectTabBase __instance, ref IEnumerable<InspectTabBase> __result)
 		{
 			Thing selectedThing = Find.Selector.SingleSelectedThing;
@@ -32,7 +35,7 @@ namespace Compilatron
 			CompPower compPower = (selectedThing as ThingWithComps)?.TryGetComp<CompPower>();
 			if (compPower is null)
 				return;
-			
+
 			StringBuilder stringBuilder = new StringBuilder();
 			Log.Warning($"Connectors ({compPower.PowerNet.connectors.Count})");
 			foreach (CompPower x in compPower.PowerNet.connectors)
@@ -61,12 +64,16 @@ namespace Compilatron
 			Log.Warning($"Power Comps ({compPower.PowerNet.powerComps.Count})");
 			foreach (CompPowerTrader x in compPower.PowerNet.powerComps)
 			{
-				stringBuilder.Append(x.parent.def.LabelCap + $" ({x.GetType().BaseType}/{x.GetType().BaseType.BaseType}, {x.PowerOutput}W)\n");
+				CompPowerPlant compPowerPlant = x.parent.TryGetComp<CompPowerPlant>();
+				if (compPowerPlant is null)
+					stringBuilder.Append(x.parent.def.LabelCap + $" ({x.GetType().BaseType}/{x.GetType().BaseType.BaseType}, {x.PowerOutput}W)\n");
+				else
+					stringBuilder.Append(x.parent.def.LabelCap + $" ({x.GetType().BaseType}/{x.GetType().BaseType.BaseType}, {x.PowerOutput}W/{-compPowerPlant.Props.basePowerConsumption}W)\n");
 			}
 			Log.Message(stringBuilder.ToString());
 			stringBuilder.Clear();
 
-			__result = __result.AddItem(new PowerTab());
+			__result = __result.AddItem(powerTab);
 		}
 	}
 }
