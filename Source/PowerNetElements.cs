@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using RimWorld;
 using Verse;
 
@@ -36,5 +37,24 @@ namespace Compilatron
 		public List<CompPowerPlant> PowerPlants => _powerPlants;
 
 		public List<CompPowerTrader> Consumers => _consumers;
+
+		public override string ToString()
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+			
+			stringBuilder.Append($"Batteries ({_batteries.Count}):\n");
+			foreach (CompPowerBattery battery in _batteries)
+				stringBuilder.Append($"{battery.parent.def.LabelCap} at {battery.parent.Position} ({battery.StoredEnergy}/{battery.Props.storedEnergyMax} Wd)\n");
+
+			stringBuilder.Append($"\nPowerplants ({_powerPlants.Count}):\n");
+			foreach (CompPowerPlant powerPlant in _powerPlants)
+				stringBuilder.Append($"{powerPlant.parent.def.LabelCap} at {powerPlant.parent.Position} ({powerPlant.PowerOutput}/{-powerPlant.Props.basePowerConsumption} W)\n");
+
+			stringBuilder.Append($"\nConsumers ({_consumers.Count}):\n");
+			foreach (CompPowerTrader consumer in _consumers)
+				stringBuilder.Append($"{consumer.parent.def.LabelCap} at {consumer.parent.Position} ({consumer.PowerOutput} W)\n");
+
+			return stringBuilder.ToString();
+		}
 	}
 }

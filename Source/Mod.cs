@@ -35,7 +35,8 @@ namespace Compilatron
 			CompPower compPower = (selectedThing as ThingWithComps)?.TryGetComp<CompPower>();
 			if (compPower is null)
 				return;
-			Log.Error(default(Vector2).ToString());
+
+			PowerNetElements powerNetElements = new PowerNetElements();
 
 			StringBuilder stringBuilder = new StringBuilder();
 			Log.Warning($"Connectors ({compPower.PowerNet.connectors.Count})");
@@ -58,6 +59,7 @@ namespace Compilatron
 			foreach (CompPowerBattery x in compPower.PowerNet.batteryComps)
 			{
 				stringBuilder.Append(x.parent.def.LabelCap + $" ({x.StoredEnergy}Wd)\n");
+				powerNetElements.AddBattery(x);
 			}
 			Log.Message(stringBuilder.ToString());
 			stringBuilder.Clear();
@@ -70,9 +72,14 @@ namespace Compilatron
 					stringBuilder.Append(x.parent.def.LabelCap + $" ({x.GetType().BaseType}/{x.GetType().BaseType.BaseType}, {x.PowerOutput}W)\n");
 				else
 					stringBuilder.Append(compPowerPlant.parent.def.LabelCap + $" ({compPowerPlant.GetType().BaseType}/{compPowerPlant.GetType().BaseType.BaseType}, {compPowerPlant.PowerOutput}W/{-compPowerPlant.Props.basePowerConsumption}W)\n");
+				
+				powerNetElements.AddPowerComponent(x);
 			}
 			Log.Message(stringBuilder.ToString());
 			stringBuilder.Clear();
+			
+			Log.Message($"PowerNet: \n{powerNetElements}");
+			powerTab.UpdatePowerNetInfo(powerNetElements);
 
 			__result = __result.AddItem(powerTab);
 		}

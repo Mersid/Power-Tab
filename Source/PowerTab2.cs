@@ -11,20 +11,28 @@ namespace Compilatron
     // This class is used in Harmony
     public class PowerTab2 : ITab
     {
-        public PowerTab2()
-        {
-            size = new Vector2(450f, 450f);
-            labelKey = "PowerSwitch_Power";
-        }
-
-
         private Vector2 _scrollPos;
         private float _lastY;
         private readonly Dictionary<ThingDef, bool> _collapseTab = new Dictionary<ThingDef, bool>();
 
+        private PowerNetElements _powerNetElements;
+
+        
+        public PowerTab2()
+        {
+            size = new Vector2(450f, 850f);
+            labelKey = "PowerSwitch_Power";
+            _powerNetElements = new PowerNetElements();
+        }
+
+        public void UpdatePowerNetInfo(PowerNetElements powerNetElements)
+        {
+            _powerNetElements = powerNetElements;
+        }
+        
         protected override void FillTab()
         {
-            Widgets.Label(new Rect(0, 0, 500, 50), "Hello world!\nHello World 2!");
+            Widgets.Label(new Rect(10, 0, 500, 500), $"Power net: \n{_powerNetElements}");
             
             return;
             CompPowerTracker compPower = SelThing.TryGetComp<CompPowerTracker>();
