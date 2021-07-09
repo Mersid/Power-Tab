@@ -9,9 +9,9 @@ namespace Compilatron
 {
     // ReSharper disable once UnusedType.Global
     // This class is used in Harmony
-    public class PowerTab : ITab
+    public class PowerTab2 : ITab
     {
-        public PowerTab()
+        public PowerTab2()
         {
             size = new Vector2(450f, 450f);
             labelKey = "PowerSwitch_Power";
@@ -24,6 +24,9 @@ namespace Compilatron
 
         protected override void FillTab()
         {
+            Widgets.Label(new Rect(0, 0, 500, 50), "Hello world!\nHello World 2!");
+            
+            return;
             CompPowerTracker compPower = SelThing.TryGetComp<CompPowerTracker>();
             PowerNet powerNet = compPower?.PowerNetwork;
             if (powerNet == null) return;

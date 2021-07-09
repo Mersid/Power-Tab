@@ -27,7 +27,7 @@ namespace Compilatron
 	[HarmonyPatch("CurTabs")]
 	public class Patch
 	{
-		private static PowerTab powerTab = new PowerTab();
+		private static PowerTab2 powerTab = new PowerTab2();
 		private static void Postfix(InspectTabBase __instance, ref IEnumerable<InspectTabBase> __result)
 		{
 			Thing selectedThing = Find.Selector.SingleSelectedThing;
@@ -35,6 +35,7 @@ namespace Compilatron
 			CompPower compPower = (selectedThing as ThingWithComps)?.TryGetComp<CompPower>();
 			if (compPower is null)
 				return;
+			Log.Error(default(Vector2).ToString());
 
 			StringBuilder stringBuilder = new StringBuilder();
 			Log.Warning($"Connectors ({compPower.PowerNet.connectors.Count})");
@@ -68,7 +69,7 @@ namespace Compilatron
 				if (compPowerPlant is null)
 					stringBuilder.Append(x.parent.def.LabelCap + $" ({x.GetType().BaseType}/{x.GetType().BaseType.BaseType}, {x.PowerOutput}W)\n");
 				else
-					stringBuilder.Append(x.parent.def.LabelCap + $" ({x.GetType().BaseType}/{x.GetType().BaseType.BaseType}, {x.PowerOutput}W/{-compPowerPlant.Props.basePowerConsumption}W)\n");
+					stringBuilder.Append(compPowerPlant.parent.def.LabelCap + $" ({compPowerPlant.GetType().BaseType}/{compPowerPlant.GetType().BaseType.BaseType}, {compPowerPlant.PowerOutput}W/{-compPowerPlant.Props.basePowerConsumption}W)\n");
 			}
 			Log.Message(stringBuilder.ToString());
 			stringBuilder.Clear();
