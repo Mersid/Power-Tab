@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
@@ -62,10 +63,12 @@
   <ItemGroup>
     <Compile Include="CompPowerTracker.cs" />
     <Compile Include="CompPropertiesPowerTracker.cs" />
+    <Compile Include="IDrawableTabElement.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="PowerNetElements.cs" />
     <Compile Include="PowerTab.cs" />
     <Compile Include="PowerTab2.cs" />
+    <Compile Include="PowerTabElement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -38,48 +38,16 @@ namespace Compilatron
 
 			PowerNetElements powerNetElements = new PowerNetElements();
 
-			StringBuilder stringBuilder = new StringBuilder();
-			Log.Warning($"Connectors ({compPower.PowerNet.connectors.Count})");
-			foreach (CompPower x in compPower.PowerNet.connectors)
-			{
-				stringBuilder.Append(x + "\n");
-			}
-			Log.Message(stringBuilder.ToString());
-			stringBuilder.Clear();
-
-			Log.Warning($"Transmitters ({compPower.PowerNet.transmitters.Count})");
-			foreach (CompPower x in compPower.PowerNet.transmitters)
-			{
-				stringBuilder.Append(x + "\n");
-			}
-			Log.Message(stringBuilder.ToString());
-			stringBuilder.Clear();
-
-			Log.Warning($"Battery Comps ({compPower.PowerNet.batteryComps.Count})");
 			foreach (CompPowerBattery x in compPower.PowerNet.batteryComps)
-			{
-				stringBuilder.Append(x.parent.def.LabelCap + $" ({x.StoredEnergy}Wd)\n");
 				powerNetElements.AddBattery(x);
-			}
-			Log.Message(stringBuilder.ToString());
-			stringBuilder.Clear();
 			
-			Log.Warning($"Power Comps ({compPower.PowerNet.powerComps.Count})");
+
 			foreach (CompPowerTrader x in compPower.PowerNet.powerComps)
-			{
-				CompPowerPlant compPowerPlant = x.parent.TryGetComp<CompPowerPlant>();
-				if (compPowerPlant is null)
-					stringBuilder.Append(x.parent.def.LabelCap + $" ({x.GetType().BaseType}/{x.GetType().BaseType.BaseType}, {x.PowerOutput}W)\n");
-				else
-					stringBuilder.Append(compPowerPlant.parent.def.LabelCap + $" ({compPowerPlant.GetType().BaseType}/{compPowerPlant.GetType().BaseType.BaseType}, {compPowerPlant.PowerOutput}W/{-compPowerPlant.Props.basePowerConsumption}W)\n");
-				
 				powerNetElements.AddPowerComponent(x);
-			}
-			Log.Message(stringBuilder.ToString());
-			stringBuilder.Clear();
 			
-			Log.Message($"PowerNet: \n{powerNetElements}");
+
 			powerTab.UpdatePowerNetInfo(powerNetElements);
+			Log.Message(powerNetElements.ToString());
 
 			__result = __result.AddItem(powerTab);
 		}
