@@ -63,12 +63,14 @@
   <ItemGroup>
     <Compile Include="CompPowerTracker.cs" />
     <Compile Include="CompPropertiesPowerTracker.cs" />
+    <Compile Include="CurTabsPatch.cs" />
     <Compile Include="IDrawableTabElement.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="PowerNetElements.cs" />
     <Compile Include="PowerTab.cs" />
     <Compile Include="PowerTab2.cs" />
-    <Compile Include="PowerTabElement.cs" />
+    <Compile Include="PowerTabGroup.cs" />
+    <Compile Include="PowerTabThing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

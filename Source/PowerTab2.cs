@@ -40,10 +40,6 @@ namespace Compilatron
         
         protected override void FillTab()
         {
-            
-            
-            Widgets.Label(new Rect(0, 0, 50, 24), $"Power net: \n{_powerNetElements}");
-            
             Widgets.BeginScrollView(new Rect(
                     new Vector2(LeftMargin, TopMargin), 
                     new Vector2(innerSize.x, innerSize.y)).ContractedBy(GenUI.GapTiny), // Defines the outer (fixed) view - the viewport.
@@ -54,28 +50,20 @@ namespace Compilatron
             );
             
             float y = 10;
-            /*
-            for (int i = 0; i < 80; i++)
-            {
-                PowerTabElement powerTabElement = new PowerTabElement(i.ToString(), 0, innerSize.x);
-                powerTabElement.Draw(y);
-                y += powerTabElement.Height;
-            }
-*/
 
             foreach (CompPowerPlant powerPlant in _powerNetElements.PowerPlants)
             {
-                PowerTabElement powerTabElement =
-                    new PowerTabElement(powerPlant.parent.LabelCap, powerPlant.PowerOutput, innerSize.x);
-                powerTabElement.Draw(y);
-                y += powerTabElement.Height;
+                PowerTabGroup powerTabGroup =
+                    new PowerTabGroup(powerPlant.parent.LabelCap, powerPlant.PowerOutput, innerSize.x);
+                powerTabGroup.Draw(y);
+                y += powerTabGroup.Height;
             }
             
             
             _lastY = y;
-            //Widgets.Label(new Rect(0, 0, 50, 24), "Hello world!");
+            
             Widgets.EndScrollView();
-            Log.Warning(_scrollPos.ToString());
+
             return;
             CompPowerTracker compPower = SelThing.TryGetComp<CompPowerTracker>();
             PowerNet powerNet = compPower?.PowerNetwork;
