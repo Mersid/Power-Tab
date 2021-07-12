@@ -18,11 +18,11 @@ namespace Compilatron
         private PowerNetElements _powerNetElements;
 
         private const float LeftMargin = 5;
-        private const float RightMargin = 5;
+        private const float RightMargin = 2;
         private const float TopMargin = 30;
         private const float BottomMargin = 5;
 
-        private Vector2 innerSize; // Size of the scrollable portion of the tab display.
+        private Vector2 innerSize; // Size of the scrollable portion of the tab display. It is the size, minus the margins.
 
         
         public PowerTab2()
@@ -46,25 +46,30 @@ namespace Compilatron
             
             Widgets.BeginScrollView(new Rect(
                     new Vector2(LeftMargin, TopMargin), 
-                    new Vector2(size.x - LeftMargin, size.y - (TopMargin + BottomMargin))).ContractedBy(GenUI.GapTiny), // Defines the outer (fixed) view - the viewport.
-                                                                                                                                // Size vector is subtracted by margins so opposite end doesnt fall off screen.
+                    new Vector2(innerSize.x, innerSize.y)).ContractedBy(GenUI.GapTiny), // Defines the outer (fixed) view - the viewport.
+                                                                                            // Size vector is subtracted by margins so opposite end doesnt fall off screen.
                 ref _scrollPos,
-                new Rect(default(Vector2), new Vector2(size.x - GenUI.GapTiny * 2 - GenUI.ScrollBarWidth - LeftMargin, _lastY)) // Defines the inner, scrollable, view. 
-                                                                                                                                         // When bigger than outRect, scroll bars appear for navigation.
+                new Rect(default, new Vector2(innerSize.x - GenUI.GapTiny * 2 - GenUI.ScrollBarWidth, _lastY)) // Defines the inner, scrollable, view. 
+                                                                                                                                     // When bigger than outRect, scroll bars appear for navigation.
             );
             
             float y = 10;
-            
+            /*
             for (int i = 0; i < 80; i++)
             {
-                
-                Rect r = new Rect(0, y, size.x - GenUI.GapTiny * 2 - GenUI.ScrollBarWidth - LeftMargin, Text.SmallFontHeight + GenUI.GapTiny * 2);
-                 
-                Widgets.DrawOptionSelected(r);
-                //Widgets.Label(new Rect(0, y, 1000, 24), $"Hello world: {i}");
-                y += Text.SmallFontHeight + GenUI.GapTiny * 2 + 2;
+                PowerTabElement powerTabElement = new PowerTabElement(i.ToString(), 0, innerSize.x);
+                powerTabElement.Draw(y);
+                y += powerTabElement.Height;
             }
+*/
 
+            foreach (CompPowerPlant powerPlant in _powerNetElements.PowerPlants)
+            {
+                PowerTabElement powerTabElement =
+                    new PowerTabElement(powerPlant.parent.LabelCap, powerPlant.PowerOutput, innerSize.x);
+                powerTabElement.Draw(y);
+                y += powerTabElement.Height;
+            }
             
             
             _lastY = y;

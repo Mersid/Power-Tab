@@ -3,6 +3,6 @@
 	public interface IDrawableTabElement
 	{
 		float Height { get; }
-		void Draw();
+		void Draw(float y);
 	}
 }
