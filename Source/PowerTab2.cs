@@ -50,13 +50,16 @@ namespace Compilatron
             );
             
             float y = 10;
-
+            
             foreach (CompPowerPlant powerPlant in _powerNetElements.PowerPlants)
-            {
+            {/*
                 PowerTabGroup powerTabGroup =
                     new PowerTabGroup(powerPlant.parent.LabelCap, powerPlant.PowerOutput, innerSize.x);
                 powerTabGroup.Draw(y);
-                y += powerTabGroup.Height;
+                y += powerTabGroup.Height;*/
+                PowerTabThing powerTabThing = new PowerTabThing(powerPlant.parent, powerPlant.PowerOutput, 1, innerSize.x);
+                powerTabThing.Draw(y);
+                y += powerTabThing.Height;
             }
             
             
