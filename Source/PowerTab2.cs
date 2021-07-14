@@ -23,6 +23,9 @@ namespace Compilatron
         private const float BottomMargin = 5;
 
         private Vector2 innerSize; // Size of the scrollable portion of the tab display. It is the size, minus the margins.
+        private readonly Dictionary<CompPower, bool> _groupCollapsed; // PowerTab* are drawable elements and shouldn't contain state, so we'll put the collapsed tracker here.
+                                                                      // Since PowerTab* elements are recreated each tick, store them as a dict with a CompPower as the key, since they persist.
+                                                                      // In the context of groups, it is safe to reference them by type since all instances will be in the same group.
 
         
         public PowerTab2()
@@ -31,6 +34,7 @@ namespace Compilatron
             innerSize = new Vector2(size.x - (LeftMargin + RightMargin), size.y - (TopMargin + BottomMargin));
             labelKey = "PowerSwitch_Power";
             _powerNetElements = new PowerNetElements();
+            _groupCollapsed = new Dictionary<CompPower, bool>();
         }
 
         public void UpdatePowerNetInfo(PowerNetElements powerNetElements)
@@ -52,16 +56,20 @@ namespace Compilatron
             float y = 10;
             
             foreach (CompPowerPlant powerPlant in _powerNetElements.PowerPlants)
-            {/*
+            {
+                // If _groupCollapsed[powerPlant] key does not exist, the code will crash, so initialize all such keys in the dictionary
+                if (!_groupCollapsed.ContainsKey(powerPlant))
+                    _groupCollapsed[powerPlant] = false;
+                
                 PowerTabGroup powerTabGroup =
-                    new PowerTabGroup(powerPlant.parent.LabelCap, powerPlant.PowerOutput, innerSize.x);
+                    new PowerTabGroup(powerPlant.parent.LabelCap, 1, powerPlant.PowerOutput, null, innerSize.x, _groupCollapsed[powerPlant], group => _groupCollapsed[powerPlant] = !_groupCollapsed[powerPlant]);
                 powerTabGroup.Draw(y);
-                y += powerTabGroup.Height;*/
-                PowerTabThing powerTabThing = new PowerTabThing(powerPlant.parent, powerPlant.PowerOutput, 1, innerSize.x);
+                y += powerTabGroup.Height;
+                /*PowerTabThing powerTabThing = new PowerTabThing(powerPlant.parent, powerPlant.PowerOutput, 1, innerSize.x);
                 powerTabThing.Draw(y);
-                y += powerTabThing.Height;
+                y += powerTabThing.Height;*/
             }
-
+/*
             foreach (CompPowerTrader consumer in _powerNetElements.Consumers)
             {
                 PowerTabThing powerTabThing = new PowerTabThing(consumer.parent, consumer.PowerOutput, 0.66f, innerSize.x);
@@ -75,7 +83,7 @@ namespace Compilatron
                 powerTabThing.Draw(y);
                 y += powerTabThing.Height;
             }
-            
+            */
             
             _lastY = y;
             

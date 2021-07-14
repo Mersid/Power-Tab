@@ -20,7 +20,7 @@ namespace Compilatron
 		/// </summary>
 		/// <param name="thing">A battery, producer, or consumer on the power grid. As a rule of thumb,
 		/// if it was passed from <see cref="PowerNetElements"/>, it should work just fine.</param>
-		/// <param name="power"></param>
+		/// <param name="power">How much power to display on the watt display</param>
 		/// <param name="barFill">How much to fill the power bar, between 0 and 1</param>
 		/// <param name="parentTabWidth">How wide the power tab page is</param>
 		/// <param name="isBattery">If it is a battery, display as Wd instead of W</param>
