@@ -61,6 +61,20 @@ namespace Compilatron
                 powerTabThing.Draw(y);
                 y += powerTabThing.Height;
             }
+
+            foreach (CompPowerTrader consumer in _powerNetElements.Consumers)
+            {
+                PowerTabThing powerTabThing = new PowerTabThing(consumer.parent, consumer.PowerOutput, 0.66f, innerSize.x);
+                powerTabThing.Draw(y);
+                y += powerTabThing.Height;
+            }
+            
+            foreach (CompPowerBattery consumer in _powerNetElements.Batteries)
+            {
+                PowerTabThing powerTabThing = new PowerTabThing(consumer.parent, (float) Math.Round(consumer.StoredEnergy, 2), 0.33f, innerSize.x, true);
+                powerTabThing.Draw(y);
+                y += powerTabThing.Height;
+            }
             
             
             _lastY = y;
