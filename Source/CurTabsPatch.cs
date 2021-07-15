@@ -26,6 +26,8 @@ namespace Compilatron
 			if (compPower is null)
 				return;
 
+			// Code past this point runs only if the aforementioned compPower element actually contains a CompPower
+			
 			PowerNetElements powerNetElements = new PowerNetElements();
 
 			// Add batteries

@@ -18,7 +18,8 @@ namespace Compilatron
 		private List<PowerTabThing> _children;
 		private bool _expanded;
 		private readonly Action<PowerTabGroup> _ifButtonPressed;
-		public float Height => (Text.SmallFontHeight + GenUI.GapTiny * 2 + 2); // Note: No width since we're only really drawing down; the width is fixed.
+		private static float SelfHeight => Text.SmallFontHeight + GenUI.GapTiny * 2 + 2;
+		public float Height => SelfHeight + (_expanded ? _children.Sum(t => t.Height) : 1); // Note: No width since we're only really drawing down; the width is fixed.
 
 		/// <summary>
 		/// Represents the data needed for drawing to the power tab an entire group of the same thing,
@@ -53,6 +54,16 @@ namespace Compilatron
 
 			Rect labelRect = new Rect(35, y + 4, _parentTabWidth, Text.SmallFontHeight + GenUI.GapTiny * 2);
 			Widgets.Label(labelRect, $"{_count} {_label}");
+
+			y += SelfHeight;
+
+			if (!_expanded) return;
+			foreach (PowerTabThing powerTabThing in _children)
+			{
+				powerTabThing.Draw(y);
+				y += powerTabThing.Height;
+			}
+			
 		}
 	}
 }

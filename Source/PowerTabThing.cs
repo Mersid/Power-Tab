@@ -46,13 +46,15 @@ namespace Compilatron
 			Widgets.Label(labelRect, _thing.LabelCap);
 
 			Rect barRect = new Rect(_parentTabWidth / 2.5f + 40, y, _parentTabWidth / 2 - 25, GenUI.ListSpacing);
-			Widgets.FillableBar(barRect.ContractedBy(2), _barFill / 1.32f);
+			Widgets.FillableBar(barRect.ContractedBy(2), Mathf.Clamp(_barFill, 0, 1)); 
 
 			string powerDrawStr = $"{_power} " + (_isBattery ? "Wd" : "W");
-			Rect wattBkgRect = new Rect(_parentTabWidth / 2.5f + 40, y, powerDrawStr.GetWidthCached() + 16, GenUI.ListSpacing);
+			float textWidth = Text.CalcSize(powerDrawStr).x; // Calculate here instead of using cache since the numbers can change fast, and the cache can become outdated, leading to minor graphical issues.
+			
+			Rect wattBkgRect = new Rect(_parentTabWidth / 2.5f + 40, y, textWidth + 16, GenUI.ListSpacing);
 			Widgets.DrawRectFast(wattBkgRect.ContractedBy(GenUI.GapTiny * 1.5f), Color.black);
 
-			Rect wattLabelRect = new Rect(wattBkgRect.x + 6, y + 3, powerDrawStr.GetWidthCached() + 3 /*Small buffer to prevent potential overflow*/, GenUI.ListSpacing);
+			Rect wattLabelRect = new Rect(wattBkgRect.x + 6, y + 3, textWidth /*Small buffer to prevent potential overflow*/, GenUI.ListSpacing);
 			Widgets.Label(wattLabelRect, powerDrawStr);
 			
 		}

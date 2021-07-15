@@ -23,10 +23,10 @@ namespace Compilatron
         private const float BottomMargin = 5;
 
         private Vector2 innerSize; // Size of the scrollable portion of the tab display. It is the size, minus the margins.
-        private readonly Dictionary<CompPower, bool> _groupCollapsed; // PowerTab* are drawable elements and shouldn't contain state, so we'll put the collapsed tracker here.
+        private readonly Dictionary<ThingDef, bool> _groupCollapsed; // PowerTab* are drawable elements and shouldn't contain state, so we'll put the collapsed tracker here.
                                                                       // Since PowerTab* elements are recreated each tick, store them as a dict with a CompPower as the key, since they persist.
                                                                       // In the context of groups, it is safe to reference them by type since all instances will be in the same group.
-
+                                                                      
         
         public PowerTab2()
         {
@@ -34,7 +34,7 @@ namespace Compilatron
             innerSize = new Vector2(size.x - (LeftMargin + RightMargin), size.y - (TopMargin + BottomMargin));
             labelKey = "PowerSwitch_Power";
             _powerNetElements = new PowerNetElements();
-            _groupCollapsed = new Dictionary<CompPower, bool>();
+            _groupCollapsed = new Dictionary<ThingDef, bool>();
         }
 
         public void UpdatePowerNetInfo(PowerNetElements powerNetElements)
@@ -54,17 +54,36 @@ namespace Compilatron
             );
             
             float y = 10;
-            
-            foreach (CompPowerPlant powerPlant in _powerNetElements.PowerPlants)
+
+            foreach (IGrouping<ThingDef, CompPowerPlant> powerPlantGroup in _powerNetElements.PowerPlants.GroupBy(t => t.parent.def))
             {
-                // If _groupCollapsed[powerPlant] key does not exist, the code will crash, so initialize all such keys in the dictionary
-                if (!_groupCollapsed.ContainsKey(powerPlant))
-                    _groupCollapsed[powerPlant] = false;
+                // Iterating over groups. Each group consists of all instances of a single type of power plant (ex: every solar panel, every chemfuel generator, etc)
+                // in the grid. To access the instances themselves, use a second loop.
                 
+                // If _groupCollapsed[powerPlantGroup.Key] key does not exist, the code will crash, so initialize all such keys in the dictionary
+                if (!_groupCollapsed.ContainsKey(powerPlantGroup.Key))
+                    _groupCollapsed[powerPlantGroup.Key] = false;
+
+                List<PowerTabThing> powerTabThings = new List<PowerTabThing>();
+                //Iterate over each item in an item group
+                foreach (CompPowerPlant powerPlant in powerPlantGroup)
+                {
+                    powerTabThings.Add(new PowerTabThing(powerPlant.parent, powerPlant.PowerOutput,powerPlant.PowerOutput / -powerPlant.Props.basePowerConsumption, innerSize.x));
+                }
+                
+                // This shouldn't happen, but we'll check anyway
+                if (!powerPlantGroup.ToList().Any())
+                    continue;
+
                 PowerTabGroup powerTabGroup =
-                    new PowerTabGroup(powerPlant.parent.LabelCap, 1, powerPlant.PowerOutput, null, innerSize.x, _groupCollapsed[powerPlant], group => _groupCollapsed[powerPlant] = !_groupCollapsed[powerPlant]);
+                    new PowerTabGroup(powerPlantGroup.First().parent.LabelCap, powerPlantGroup.ToList().Count(), 0, powerTabThings, innerSize.x, _groupCollapsed[powerPlantGroup.Key], group => _groupCollapsed[powerPlantGroup.Key] = !_groupCollapsed[powerPlantGroup.Key]);
                 powerTabGroup.Draw(y);
                 y += powerTabGroup.Height;
+            }
+
+            foreach (CompPowerPlant powerPlant in _powerNetElements.PowerPlants)
+            {
+                
                 /*PowerTabThing powerTabThing = new PowerTabThing(powerPlant.parent, powerPlant.PowerOutput, 1, innerSize.x);
                 powerTabThing.Draw(y);
                 y += powerTabThing.Height;*/
