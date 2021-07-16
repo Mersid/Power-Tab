@@ -54,7 +54,8 @@ namespace Compilatron
             );
             
             float y = 10;
-
+            
+            List<PowerTabGroup> powerTabGroups = new List<PowerTabGroup>();
             foreach (IGrouping<ThingDef, CompPowerPlant> powerPlantGroup in _powerNetElements.PowerPlants.GroupBy(t => t.parent.def))
             {
                 // Iterating over groups. Each group consists of all instances of a single type of power plant (ex: every solar panel, every chemfuel generator, etc)
@@ -63,9 +64,10 @@ namespace Compilatron
                 // If _groupCollapsed[powerPlantGroup.Key] key does not exist, the code will crash, so initialize all such keys in the dictionary
                 if (!_groupCollapsed.ContainsKey(powerPlantGroup.Key))
                     _groupCollapsed[powerPlantGroup.Key] = false;
-
-                List<PowerTabThing> powerTabThings = new List<PowerTabThing>();
+                
+                
                 //Iterate over each item in an item group
+                List<PowerTabThing> powerTabThings = new List<PowerTabThing>();
                 foreach (CompPowerPlant powerPlant in powerPlantGroup)
                 {
                     powerTabThings.Add(new PowerTabThing(powerPlant.parent, powerPlant.PowerOutput,powerPlant.PowerOutput / -powerPlant.Props.basePowerConsumption, innerSize.x));
@@ -75,12 +77,47 @@ namespace Compilatron
                 if (!powerPlantGroup.ToList().Any())
                     continue;
 
+                float groupPower = powerPlantGroup.Sum(t => t.PowerOutput);
+                float groupPowerMax = -powerPlantGroup.Sum(t => t.Props.basePowerConsumption);
+                
+                PowerTabGroup powerTabGroup = new PowerTabGroup(powerPlantGroup.First().parent.LabelCap, powerPlantGroup.ToList().Count(), groupPower, groupPower / groupPowerMax, powerTabThings, innerSize.x, _groupCollapsed[powerPlantGroup.Key], false, group => _groupCollapsed[powerPlantGroup.Key] = !_groupCollapsed[powerPlantGroup.Key]);
+                powerTabGroups.Add(powerTabGroup);
+            }
+            PowerTabCategory powerTabCategory = new PowerTabCategory("Producers", 1000, 0.85f, powerTabGroups, innerSize.x);
+            powerTabCategory.Draw(y);
+            y += powerTabCategory.Height;
+            
+/*
+            foreach (IGrouping<ThingDef, CompPowerPlant> powerPlantGroup in _powerNetElements.PowerPlants.GroupBy(t => t.parent.def))
+            {
+                // Iterating over groups. Each group consists of all instances of a single type of power plant (ex: every solar panel, every chemfuel generator, etc)
+                // in the grid. To access the instances themselves, use a second loop.
+                
+                // If _groupCollapsed[powerPlantGroup.Key] key does not exist, the code will crash, so initialize all such keys in the dictionary
+                if (!_groupCollapsed.ContainsKey(powerPlantGroup.Key))
+                    _groupCollapsed[powerPlantGroup.Key] = false;
+                
+                
+                //Iterate over each item in an item group
+                List<PowerTabThing> powerTabThings = new List<PowerTabThing>();
+                foreach (CompPowerPlant powerPlant in powerPlantGroup)
+                {
+                    powerTabThings.Add(new PowerTabThing(powerPlant.parent, powerPlant.PowerOutput,powerPlant.PowerOutput / -powerPlant.Props.basePowerConsumption, innerSize.x));
+                }
+                
+                // This shouldn't happen, but we'll check anyway
+                if (!powerPlantGroup.ToList().Any())
+                    continue;
+
+                float groupPower = powerPlantGroup.Sum(t => t.PowerOutput);
+                float groupPowerMax = -powerPlantGroup.Sum(t => t.Props.basePowerConsumption);
+                
                 PowerTabGroup powerTabGroup =
-                    new PowerTabGroup(powerPlantGroup.First().parent.LabelCap, powerPlantGroup.ToList().Count(), 0, powerTabThings, innerSize.x, _groupCollapsed[powerPlantGroup.Key], group => _groupCollapsed[powerPlantGroup.Key] = !_groupCollapsed[powerPlantGroup.Key]);
+                    new PowerTabGroup(powerPlantGroup.First().parent.LabelCap, powerPlantGroup.ToList().Count(), groupPower, groupPower / groupPowerMax, powerTabThings, innerSize.x, _groupCollapsed[powerPlantGroup.Key], false, group => _groupCollapsed[powerPlantGroup.Key] = !_groupCollapsed[powerPlantGroup.Key]);
                 powerTabGroup.Draw(y);
                 y += powerTabGroup.Height;
             }
-
+*/
             foreach (CompPowerPlant powerPlant in _powerNetElements.PowerPlants)
             {
                 
