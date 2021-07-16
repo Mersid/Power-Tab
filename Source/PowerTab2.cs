@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
-using Verse;
 using UnityEngine;
+using Verse;
 
 namespace Compilatron
 {
@@ -13,7 +12,6 @@ namespace Compilatron
     {
         private Vector2 _scrollPos;
         private float _lastY;
-        private readonly Dictionary<ThingDef, bool> _collapseTab = new Dictionary<ThingDef, bool>();
 
         private PowerNetElements _powerNetElements;
 
@@ -86,143 +84,11 @@ namespace Compilatron
             PowerTabCategory powerTabCategory = new PowerTabCategory("Producers", 1000, 0.85f, powerTabGroups, innerSize.x);
             powerTabCategory.Draw(y);
             y += powerTabCategory.Height;
-            
-/*
-            foreach (IGrouping<ThingDef, CompPowerPlant> powerPlantGroup in _powerNetElements.PowerPlants.GroupBy(t => t.parent.def))
-            {
-                // Iterating over groups. Each group consists of all instances of a single type of power plant (ex: every solar panel, every chemfuel generator, etc)
-                // in the grid. To access the instances themselves, use a second loop.
-                
-                // If _groupCollapsed[powerPlantGroup.Key] key does not exist, the code will crash, so initialize all such keys in the dictionary
-                if (!_groupCollapsed.ContainsKey(powerPlantGroup.Key))
-                    _groupCollapsed[powerPlantGroup.Key] = false;
-                
-                
-                //Iterate over each item in an item group
-                List<PowerTabThing> powerTabThings = new List<PowerTabThing>();
-                foreach (CompPowerPlant powerPlant in powerPlantGroup)
-                {
-                    powerTabThings.Add(new PowerTabThing(powerPlant.parent, powerPlant.PowerOutput,powerPlant.PowerOutput / -powerPlant.Props.basePowerConsumption, innerSize.x));
-                }
-                
-                // This shouldn't happen, but we'll check anyway
-                if (!powerPlantGroup.ToList().Any())
-                    continue;
 
-                float groupPower = powerPlantGroup.Sum(t => t.PowerOutput);
-                float groupPowerMax = -powerPlantGroup.Sum(t => t.Props.basePowerConsumption);
-                
-                PowerTabGroup powerTabGroup =
-                    new PowerTabGroup(powerPlantGroup.First().parent.LabelCap, powerPlantGroup.ToList().Count(), groupPower, groupPower / groupPowerMax, powerTabThings, innerSize.x, _groupCollapsed[powerPlantGroup.Key], false, group => _groupCollapsed[powerPlantGroup.Key] = !_groupCollapsed[powerPlantGroup.Key]);
-                powerTabGroup.Draw(y);
-                y += powerTabGroup.Height;
-            }
-*/
-            foreach (CompPowerPlant powerPlant in _powerNetElements.PowerPlants)
-            {
-                
-                /*PowerTabThing powerTabThing = new PowerTabThing(powerPlant.parent, powerPlant.PowerOutput, 1, innerSize.x);
-                powerTabThing.Draw(y);
-                y += powerTabThing.Height;*/
-            }
-/*
-            foreach (CompPowerTrader consumer in _powerNetElements.Consumers)
-            {
-                PowerTabThing powerTabThing = new PowerTabThing(consumer.parent, consumer.PowerOutput, 0.66f, innerSize.x);
-                powerTabThing.Draw(y);
-                y += powerTabThing.Height;
-            }
-            
-            foreach (CompPowerBattery consumer in _powerNetElements.Batteries)
-            {
-                PowerTabThing powerTabThing = new PowerTabThing(consumer.parent, (float) Math.Round(consumer.StoredEnergy, 2), 0.33f, innerSize.x, true);
-                powerTabThing.Draw(y);
-                y += powerTabThing.Height;
-            }
-            */
-            
             _lastY = y;
             
             Widgets.EndScrollView();
-
-            return;
-            CompPowerTracker compPower = SelThing.TryGetComp<CompPowerTracker>();
-            PowerNet powerNet = compPower?.PowerNetwork;
-            if (powerNet == null) return;
-
-            Widgets.BeginScrollView(
-                new Rect(default(Vector2), size).ContractedBy(GenUI.GapTiny),
-                ref _scrollPos,
-                new Rect(default(Vector2) - new Vector2(50, 0), new Vector2(size.x - GenUI.GapTiny * 2 - GenUI.ScrollBarWidth, _lastY))
-            );
-
-            float yref = 10;
-
-            IEnumerable< IGrouping <CompPowerTracker.PowerType, IGrouping <ThingDef, CompPowerTracker>>> categories =
-                powerNet.batteryComps.ConvertAll((c) => c.parent.GetComp<CompPowerTracker>())
-                .Concat(powerNet.powerComps.ConvertAll((c) => c.parent.GetComp<CompPowerTracker>()))
-                .GroupBy((c) => c.parent.def)
-                .GroupBy((d) => CompPowerTracker.PowerTypeFor(d.Key));
-
-            foreach (IGrouping<CompPowerTracker.PowerType, IGrouping<ThingDef, CompPowerTracker>> type in categories) {
-                
-                float p = type.Sum((g) => g.Sum((t) => t.PowerUsage));
-                float m = type.Sum((g) => g.Sum((t) => t.MaxPowerUsage));
-
-                Rect rect = new Rect(150, yref, size.x - 172, Text.SmallFontHeight);
-
-                Widgets.FillableBarLabeled(rect, Math.Abs(p / m), 0, "");
-                string label = "{0}W".Formatted(p.ToString("0"));
-                float width = label.GetWidthCached();
-                Widgets.DrawRectFast(new RectOffset(-4, -4, -4, -4).Add(rect).LeftPartPixels(width + 4), Color.black);
-                Widgets.Label(new RectOffset(-4, 0, 0, 0).Add(rect), label);
-
-                Widgets.ListSeparator(ref yref, rect.width, "{0}".Formatted(CompPowerTracker.PowerTypeString[(int)type.Key]));
-
-                float maxPowerUsage = type.Max((g) => g.Sum((c) => Math.Abs(c.MaxPowerUsage)));
-
-                yref += GenUI.GapTiny;
-
-                foreach (IGrouping<ThingDef, CompPowerTracker> defs in type)
-                {
-                    // Begin group; All future GUI elements are relative to this group
-                    GUI.BeginGroup(new Rect(0, yref, size.x, Text.SmallFontHeight + GenUI.GapTiny * 2));
-
-                    // Make a rect that is the size of our group
-                    rect = new Rect(0, 0, size.x - GenUI.GapTiny * 2 - GenUI.ScrollBarWidth, Text.SmallFontHeight + GenUI.GapTiny * 2);
-
-                    // Draw a background behind our group
-                    Widgets.DrawOptionSelected(rect);
-
-                    if (!_collapseTab.ContainsKey(defs.Key)) _collapseTab.Add(defs.Key, false);
-                    if (Widgets.ButtonText(rect.LeftPartPixels(rect.height).ContractedBy(GenUI.GapTiny), _collapseTab[defs.Key] ? "-" : "+")) _collapseTab[defs.Key] = !_collapseTab[defs.Key];
-
-                    rect.xMin += rect.height;
-                    Widgets.Label(rect.LeftPartPixels(150).ContractedBy(GenUI.GapTiny), "{0} {1}".Formatted(defs.Count(), defs.Key.LabelCap));
-                    rect.xMin += 150;
-                    Widgets.FillableBarLabeled(rect.ContractedBy(GenUI.GapTiny), defs.Sum((c) => Math.Abs(c.PowerUsage)) / maxPowerUsage, 50, "Power");
-                    label = "{0}W".Formatted(defs.Sum((c) => c.PowerUsage).ToString("0"));
-                    width = label.GetWidthCached();
-                    rect = new RectOffset(-58, 0, -4, -4).Add(rect).LeftPartPixels(width + 4);
-                    Widgets.DrawRectFast(new RectOffset(0, 0, -4, -4).Add(rect), Color.black);
-                    Widgets.Label(rect, label);
-                    yref += GenUI.ListSpacing + GenUI.GapTiny;
-
-                    GUI.EndGroup();
-
-                    if (!_collapseTab[defs.Key]) continue;
-                    
-                    foreach (CompPowerTracker comp in defs)
-                    {
-                        comp.DrawGUI(ref yref, size.x, defs.Max((c) => c.MaxPowerUsage));
-                    }
-                    
-                }
-            }
-
-            Widgets.EndScrollView();
-
-            _lastY = yref;
+            
         }
     }
 }
