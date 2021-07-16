@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using Verse;
 
-namespace Compilatron
+namespace PowerTab
 {
 	[StaticConstructorOnStartup]
 	[UsedImplicitly] // by Rimworld. All classes with StaticConstructorOnStartup will be run on game load.

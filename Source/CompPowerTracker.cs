@@ -5,7 +5,7 @@ using RimWorld.Planet;
 using UnityEngine;
 using Verse;
 
-namespace Compilatron
+namespace PowerTab
 {
 	public class CompPowerTracker : ThingComp
 	{

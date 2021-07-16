@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Verse;
 
-namespace Compilatron
+namespace PowerTab
 {
 	// ReSharper disable once UnusedType.Global
 	// This class is used in Harmony

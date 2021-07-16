@@ -4,7 +4,7 @@ using System.Text;
 using RimWorld;
 using Verse;
 
-namespace Compilatron
+namespace PowerTab
 {
 	public class PowerNetElements
 	{

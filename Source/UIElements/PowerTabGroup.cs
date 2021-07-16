@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Verse;
 
-namespace Compilatron
+namespace PowerTab.UIElements
 {
 	/// <summary>
 	/// Represents a group of items in the Power tab. Could be every sun lamp on the grid, or every chemfuel generator, or whatever

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using PowerTab.UIElements;
 using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace Compilatron
+namespace PowerTab
 {
     // ReSharper disable once UnusedType.Global
     // This class is used in Harmony

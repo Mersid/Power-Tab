@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using RimWorld;
 using Verse;
 
-namespace Compilatron
+namespace PowerTab
 {
 	/// <summary>
 	/// Patches a getter that runs when anything is selected (because it then checks for what tabs to apply) 

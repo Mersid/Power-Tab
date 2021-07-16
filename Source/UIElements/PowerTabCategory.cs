@@ -2,7 +2,7 @@
 using System.Linq;
 using Verse;
 
-namespace Compilatron
+namespace PowerTab.UIElements
 {
 	public class PowerTabCategory : IDrawableTabElement
 	{

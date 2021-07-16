@@ -2,7 +2,7 @@
 using UnityEngine;
 using Verse;
 
-namespace Compilatron
+namespace PowerTab.UIElements
 {
 	public class PowerTabThing : IDrawableTabElement
 	{

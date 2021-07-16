@@ -1,4 +1,4 @@
-﻿namespace Compilatron
+﻿namespace PowerTab.UIElements
 {
 	/// <summary>
 	/// Represents an element that can be drawn on the power tab page
