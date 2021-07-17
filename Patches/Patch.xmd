@@ -34,7 +34,7 @@
 	<Operation Class="PatchOperationAdd">
 		<xpath>Defs/ThingDef[comps/li[@Class = "Compilatron.CompPropertiesPowerTracker"]]/inspectorTabs</xpath>
 		<value>
-			<li>Compilatron.PowerTab</li>
+			<li>Compilatron.PowerTab_Old</li>
 		</value>
 	</Operation>
 </Patch>

@@ -15,7 +15,7 @@ namespace PowerTab
 	[UsedImplicitly] // by Harmony
 	public class CurTabsPatch
 	{
-		private static readonly PowerTab2 PowerTab = new PowerTab2();
+		private static readonly PowerTab PowerTab = new PowerTab();
 		private static void Postfix(InspectTabBase __instance, ref IEnumerable<InspectTabBase> __result)
 		{
 			Thing selectedThing = Find.Selector.SingleSelectedThing; // Is null if more than one item was selected.
