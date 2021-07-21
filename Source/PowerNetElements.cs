@@ -11,6 +11,7 @@ namespace PowerTab
 		public List<CompPowerBattery> Batteries { get; }
 		public List<CompPowerPlant> PowerPlants { get; }
 		public List<CompPowerTrader> Consumers { get; }
+		
 		/// <summary>
 		/// A list of all batteries, producers, and consumers on a power net
 		/// </summary>
