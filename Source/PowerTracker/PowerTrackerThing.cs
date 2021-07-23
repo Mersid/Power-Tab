@@ -5,27 +5,25 @@ using RimWorld;
 namespace PowerTab
 {
 	/// <summary>
-	/// Tracks power data for a specific thing (some form of <see cref="CompPower"/>)
+	/// Tracks power data for a specific thing (some form of <see cref="RimWorld.CompPower"/>)
 	/// </summary>
 	public class PowerTrackerThing
 	{
-		private readonly CompPower _compPower; // The CompPower that this class tracks; the backing field, so to speak
-		
 		public PowerTrackerThing(CompPower compPower)
 		{
-			_compPower = compPower;
+			CompPower = compPower;
 		}
 
 		public PowerType PowerType
 		{
 			get
 			{
-				return _compPower switch
+				return CompPower switch
 				{
 					CompPowerBattery => PowerType.Battery,
 					CompPowerPlant => PowerType.Producer,
 					CompPowerTrader => PowerType.Consumer,
-					_ => throw new ArgumentOutOfRangeException($"Could not deduce power type for {_compPower.parent.LabelCap}")
+					_ => throw new ArgumentOutOfRangeException($"Could not deduce power type for {CompPower.parent.LabelCap}")
 				};
 			}
 		}
@@ -39,7 +37,7 @@ namespace PowerTab
 			get
 			{
 				if (PowerType is PowerType.Consumer or PowerType.Producer)
-					return ((CompPowerTrader) _compPower).PowerOutput;
+					return ((CompPowerTrader) CompPower).PowerOutput;
 				return 0;
 			}
 		}
@@ -54,10 +52,11 @@ namespace PowerTab
 			get
 			{
 				if (PowerType is PowerType.Consumer or PowerType.Producer)
-					return -((CompPowerTrader) _compPower).Props.basePowerConsumption;
+					return -((CompPowerTrader) CompPower).Props.basePowerConsumption;
 				return 0;
 			}
 		}
 
+		public CompPower CompPower { get; }
 	}
 }

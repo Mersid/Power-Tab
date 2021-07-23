@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using RimWorld;
 using Verse;
 
@@ -36,7 +37,7 @@ namespace PowerTab
 			ThingDef def = compPower.parent.def;
 			// Add group if it doesn't exist, then we'll add the thing to the group
 			if (!_groups.ContainsKey(def))
-				_groups[def] = new PowerTrackerGroup(thing.PowerType);
+				_groups[def] = new PowerTrackerGroup(compPower.parent.LabelCap, thing.PowerType);
 			_groups[def].AddTrackerThing(thing);
 			
 			
@@ -76,6 +77,7 @@ namespace PowerTab
 		/// </summary>
 		/// <param name="compPower">The <see cref="PowerTrackerThing"/> that tracks the given <see cref="CompPower"/></param>
 		/// <returns></returns>
+		[CanBeNull]
 		public PowerTrackerThing GetTracker(CompPower compPower)
 		{
 			_trackers.TryGetValue(compPower, out PowerTrackerThing thing);

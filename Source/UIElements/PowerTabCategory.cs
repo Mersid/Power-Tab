@@ -9,7 +9,7 @@ namespace PowerTab.UIElements
 		private readonly string _label;
 		private readonly float _power;
 		private readonly float _barFill;
-		private readonly List<PowerTabGroup> _children;
+		private readonly IEnumerable<PowerTabGroup> _children;
 		private readonly float _parentTabWidth;
 		private readonly bool _isBattery;
 		public float Height => 25 /*List separator height*/ + _children.Sum(t => t.Height);
@@ -23,7 +23,7 @@ namespace PowerTab.UIElements
 		/// <param name="children">A list of <see cref="PowerTabGroup"/>s to draw in this category</param>
 		/// <param name="parentTabWidth">How wide the power tab page is</param>
 		/// <param name="isBattery">If it is a battery, display as Wd instead of W</param>
-		public PowerTabCategory(string label, float power, float barFill, List<PowerTabGroup> children, float parentTabWidth, bool isBattery = false)
+		public PowerTabCategory(string label, float power, float barFill, IEnumerable<PowerTabGroup> children, float parentTabWidth, bool isBattery = false)
 		{
 			_label = label;
 			_power = power;

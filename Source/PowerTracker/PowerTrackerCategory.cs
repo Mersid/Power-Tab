@@ -9,7 +9,21 @@ namespace PowerTab
 	/// </summary>
 	public class PowerTrackerCategory
 	{
-		private readonly List<PowerTrackerGroup> _children;
+		public List<PowerTrackerGroup> Children { get; }
+
+		public string Label
+		{
+			get
+			{
+				return PowerType switch
+				{
+					PowerType.Battery => "Batteries",
+					PowerType.Consumer => "Consumers",
+					PowerType.Producer => "Producers",
+					_ => throw new ArgumentOutOfRangeException()
+				};
+			}
+		}
 		
 		/// <summary>
 		/// The <see cref="PowerType"/> of the items tracked in this category
@@ -18,7 +32,7 @@ namespace PowerTab
 		
 		public PowerTrackerCategory(PowerType powerType)
 		{
-			_children = new List<PowerTrackerGroup>();
+			Children = new List<PowerTrackerGroup>();
 			PowerType = powerType;
 		}
 
@@ -26,14 +40,14 @@ namespace PowerTab
 		/// Gets the current power output. Negative values means that the tracked category is consuming power.
 		/// If the tracked category is the battery category or otherwise has no power type (a glitch), this always returns 0
 		/// </summary>
-		public float CurrentPowerOutput => _children.Sum(t => t.CurrentPowerOutput);
+		public float CurrentPowerOutput => Children.Sum(t => t.CurrentPowerOutput);
 
 		/// <summary>
 		/// Gets the desired power output. Negative values means that the tracked category is consuming power.
 		/// If the tracked category is the battery category or otherwise has no power type (a glitch), this always returns 0.
 		/// Solar panels in the children list will contribute 1 * the number of panels to this output.
 		/// </summary>
-		public float DesiredPowerOutput => _children.Sum(t => t.DesiredPowerOutput);
+		public float DesiredPowerOutput => Children.Sum(t => t.DesiredPowerOutput);
 
 		/// <summary>
 		/// Add a <see cref="PowerTrackerGroup"/> to the category. No validation will be performed in this method.
@@ -42,8 +56,8 @@ namespace PowerTab
 		/// <param name="powerTrackerGroup"></param>
 		public void AddTrackerGroup(PowerTrackerGroup powerTrackerGroup)
 		{
-			if (!_children.Contains(powerTrackerGroup))
-				_children.Add(powerTrackerGroup);
+			if (!Children.Contains(powerTrackerGroup))
+				Children.Add(powerTrackerGroup);
 		}
 	}
 }

@@ -15,7 +15,7 @@ namespace PowerTab
 	[UsedImplicitly] // by Harmony
 	public class CurTabsPatch
 	{
-		private static readonly PowerTab PowerTab = new PowerTab();
+		
 		private static void Postfix(InspectTabBase __instance, ref IEnumerable<InspectTabBase> __result)
 		{
 			Thing selectedThing = Find.Selector.SingleSelectedThing; // Is null if more than one item was selected.
@@ -39,13 +39,13 @@ namespace PowerTab
 				powerNetElements.AddPowerComponent(x);
 			
 
-			PowerTab.UpdatePowerNetInfo(powerNetElements);
+			Mod.PowerTab.UpdatePowerNetInfo(powerNetElements);
 
 			// Inject the power tab into the display. It is done here instead of in XML
 			// because we need to be able to dynamically resolve items on the power grid at runtime.
 			// Some mods have their own defs for Things that provide or consume power, so we can't patch them in XML
 			// unless we want to hunt down every mod that does this.
-			__result = __result.AddItem(PowerTab);
+			__result = __result.AddItem(Mod.PowerTab);
 		}
 	}
 }

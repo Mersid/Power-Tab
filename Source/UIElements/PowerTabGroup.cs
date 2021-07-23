@@ -16,7 +16,7 @@ namespace PowerTab.UIElements
 		private readonly float _power;
 		private readonly float _barFill;
 		private readonly float _parentTabWidth;
-		private List<PowerTabThing> _children;
+		private IEnumerable<PowerTabThing> _children;
 		private bool _expanded;
 		private readonly bool _isBattery;
 		private readonly Action<PowerTabGroup> _ifButtonPressed;
@@ -36,7 +36,7 @@ namespace PowerTab.UIElements
 		/// <param name="expanded">Whether to draw this group with its children or not</param>
 		/// <param name="isBattery">If it is a battery, display as Wd instead of W</param>
 		/// <param name="ifButtonPressed">A callback that runs if the expand button on the side is pressed. Returns the <see cref="PowerTabGroup"/> that it is called from</param>
-		public PowerTabGroup(string label, int count, float power, float barFill, List<PowerTabThing> children, float parentTabWidth, bool expanded, bool isBattery = false,  Action<PowerTabGroup> ifButtonPressed = null)
+		public PowerTabGroup(string label, int count, float power, float barFill, IEnumerable<PowerTabThing> children, float parentTabWidth, bool expanded, bool isBattery = false,  Action<PowerTabGroup> ifButtonPressed = null)
 		{
 			_label = label;
 			_count = count;
