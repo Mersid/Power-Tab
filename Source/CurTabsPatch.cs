@@ -46,7 +46,7 @@ namespace PowerTab
 			}
 
 			Mod.PowerTab.UpdatePowerNetInfo(powerNetElements);
-			Log.Message("Hello world!\n	- Subhello world!");
+			Log.Message(Mod.PowerTracker.ToString());
 			// Inject the power tab into the display. It is done here instead of in XML
 			// because we need to be able to dynamically resolve items on the power grid at runtime.
 			// Some mods have their own defs for Things that provide or consume power, so we can't patch them in XML

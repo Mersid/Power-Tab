@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using JetBrains.Annotations;
 using RimWorld;
 using Verse;
@@ -82,6 +83,14 @@ namespace PowerTab
 		{
 			_trackers.TryGetValue(compPower, out PowerTrackerThing thing);
 			return thing;
+		}
+
+		public override string ToString()
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+			foreach (CompPower compPower in _trackers.Keys)
+				stringBuilder.Append($"{compPower.parent.LabelCap} at {compPower.parent.Position}\n");
+			return stringBuilder.ToString();
 		}
 	}
 }
