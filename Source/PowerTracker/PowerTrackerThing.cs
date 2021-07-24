@@ -5,7 +5,9 @@ using RimWorld;
 namespace PowerTab
 {
 	/// <summary>
-	/// Tracks power data for a specific thing (some form of <see cref="RimWorld.CompPower"/>)
+	/// Tracks power data for a specific thing (some form of <see cref="RimWorld.CompPower"/>).
+	/// A tracker is basically a wrapper over a CompPower with some easy-to-access fields and stored in a central database.
+	/// It may also contain information that this mod requires to help process data (but is, obviously, not needed in Rimworld's binaries)
 	/// </summary>
 	public class PowerTrackerThing
 	{

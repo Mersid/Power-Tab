@@ -32,15 +32,21 @@ namespace PowerTab
 
 			// Add batteries
 			foreach (CompPowerBattery x in compPower.PowerNet.batteryComps)
+			{
 				powerNetElements.AddBattery(x);
+				Mod.PowerTracker.AddTracker(x);
+			}
+				
 			
 			// Add power consumers and producers
 			foreach (CompPowerTrader x in compPower.PowerNet.powerComps)
+			{
 				powerNetElements.AddPowerComponent(x);
-			
+				Mod.PowerTracker.AddTracker(x);
+			}
 
 			Mod.PowerTab.UpdatePowerNetInfo(powerNetElements);
-
+			Log.Message("Hello world!\n	- Subhello world!");
 			// Inject the power tab into the display. It is done here instead of in XML
 			// because we need to be able to dynamically resolve items on the power grid at runtime.
 			// Some mods have their own defs for Things that provide or consume power, so we can't patch them in XML
