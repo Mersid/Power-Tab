@@ -1,5 +1,5 @@
 .git/
-Assemblies/
+./Assemblies/
 Source/.idea/
 Source/.vs/
 Source/bin/
