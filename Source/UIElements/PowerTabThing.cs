@@ -7,7 +7,7 @@ namespace PowerTab.UIElements
 	public class PowerTabThing : IDrawableTabElement
 	{
 		public Thing _thing { get; } // Represents a battery, producer, or consumer
-		private readonly float _power;
+		public float Power { get; }
 		private readonly float _barFill;
 		private readonly float _parentTabWidth;
 		private readonly bool _isBattery;
@@ -27,7 +27,7 @@ namespace PowerTab.UIElements
 		public PowerTabThing(Thing thing, float power, float barFill, float parentTabWidth, bool isBattery = false)
 		{
 			_thing = thing;
-			_power = power;
+			Power = power;
 			_barFill = barFill;
 			_parentTabWidth = parentTabWidth;
 			_isBattery = isBattery;
@@ -48,7 +48,7 @@ namespace PowerTab.UIElements
 			Rect barRect = new Rect(_parentTabWidth / 2.5f + 40, y, _parentTabWidth / 2 - 25, GenUI.ListSpacing);
 			Widgets.FillableBar(barRect.ContractedBy(2), Mathf.Clamp(_barFill, 0, 1)); 
 
-			string powerDrawStr = $"{_power} " + (_isBattery ? "Wd" : "W");
+			string powerDrawStr = $"{Power} " + (_isBattery ? "Wd" : "W");
 			float textWidth = Text.CalcSize(powerDrawStr).x; // Calculate here instead of using cache since the numbers can change fast, and the cache can become outdated, leading to minor graphical issues.
 			
 			Rect wattBkgRect = new Rect(_parentTabWidth / 2.5f + 40, y, textWidth + 16, GenUI.ListSpacing);

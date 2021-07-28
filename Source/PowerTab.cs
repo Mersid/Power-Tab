@@ -70,13 +70,23 @@ namespace PowerTab
                     _groupCollapsed[group.Key] = false;
                 
                 // Create a PowerTabThing from every TestComp in a group. Recall that a group consists of every specific thing (ex: every solar panel, every machining table, etc)
-                List<PowerTabThing> things = group.Select(testComp => new PowerTabThing(testComp.parent, testComp.CurrentPowerOutput, testComp.CurrentPowerOutput / testComp.DesiredPowerOutput, InnerSize.x, testComp.PowerType == PowerType.Battery)).ToList();
+                List<PowerTabThing> things = group.Select(
+                    testComp => new PowerTabThing(
+                        testComp.parent, 
+                        testComp.CurrentPowerOutput, 
+                        testComp.CurrentPowerOutput / testComp.DesiredPowerOutput, 
+                        InnerSize.x, 
+                        testComp.PowerType == PowerType.Battery))
+                    .ToList();
+                
+                // Sort things in a group
+                things.SortByDescending(t => t.Power);
 
                 // Some notes:
                 // We could probably cache the group.Sum() method call to save time; may want to do it later if time permits.
                 // Groups are guaranteed to contain at least one child element. If it doesn't and we're here, something's gone very wrong.
                 PowerTabGroup powerTabGroup = new PowerTabGroup(
-                    group.First().parent.LabelCap,
+                    group.First().parent.def.LabelCap, // Def labels do not have modifiers like damage appended to it.
                     group.Count(),
                     group.Sum(t => t.CurrentPowerOutput),
                     group.Sum(t => t.CurrentPowerOutput) / group.Sum(t => t.DesiredPowerOutput),
@@ -87,12 +97,17 @@ namespace PowerTab
                     _ => _groupCollapsed[group.Key] = !_groupCollapsed[group.Key]);
                 powerTabGroups.Add(powerTabGroup);
             }
+            
+            // Sort groups in a category
+            powerTabGroups.SortByDescending(t => t.Power);
 
             // Creates categories. There should theoretically be no more than the three categories defined in PowerType.cs
             // This code essentially attempts to obtain the group's PowerType, which is, by its very nature, the same as its component children's PowerType,
             // so just get the group's first child's powertype.
-            IEnumerable<IGrouping<PowerType, PowerTabGroup>> categories =
-                powerTabGroups.GroupBy(t => t.Children.First()._thing.TryGetComp<TestComp>().PowerType); // :| That looks... fun.
+            List<IGrouping<PowerType, PowerTabGroup>> categories =
+                powerTabGroups.GroupBy(t => t.Children.First()._thing.TryGetComp<TestComp>().PowerType).ToList(); // :| That looks... fun.
+            
+            categories.SortBy(t => t.Key.ToString());
 
             foreach (IGrouping<PowerType, PowerTabGroup> category in categories)
             {
