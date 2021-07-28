@@ -29,12 +29,22 @@ namespace PowerTab
 		{
 			get
 			{
-				return PowerType switch
+				switch (PowerType)
 				{
-					PowerType.Consumer or PowerType.Producer => parent.GetComp<CompPowerTrader>().PowerOutput,
-					PowerType.Battery => parent.GetComp<CompPowerBattery>().StoredEnergy,
-					_ => 0
-				};
+					case PowerType.Consumer or PowerType.Producer:
+					{
+						// PowerOutput returns the power use or draw regardless of whether it is on or off.
+						// Obviously, things that are flicked off draw no power, so we must account for that.
+						CompFlickable compFlickable = parent.TryGetComp<CompFlickable>();
+						if (compFlickable is not null && !compFlickable.SwitchIsOn)
+							return 0;
+						return parent.GetComp<CompPowerTrader>().PowerOutput;
+					}
+					case PowerType.Battery:
+						return parent.GetComp<CompPowerBattery>().StoredEnergy;
+					default:
+						return 0;
+				}
 			}
 		}
 
