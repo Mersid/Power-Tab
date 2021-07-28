@@ -10,17 +10,6 @@ namespace PowerTab
 	/// </summary>
 	public class CompPowerTracker : ThingComp
 	{
-		
-		public override string CompInspectStringExtra()
-		{
-			return $"This is a {PowerType}\nPower: {CurrentPowerOutput}/{DesiredPowerOutput}";
-		}
-
-		public override string TransformLabel(string label)
-		{
-			return $"{label} (patched)";
-		}
-
 		public override void CompTick()
 		{
 			// For things like solar panels and other dynamically-adjusted power generators, retrieving from Props.basePowerConsumption
