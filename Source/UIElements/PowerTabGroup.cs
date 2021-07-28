@@ -9,7 +9,7 @@ namespace PowerTab.UIElements
 	/// <summary>
 	/// Represents a group of items in the Power tab. Could be every sun lamp on the grid, or every chemfuel generator, or whatever
 	/// </summary>
-	public class PowerTabGroup : IDrawableTabElement
+	public class PowerTabGroup
 	{
 		private readonly string _label;
 		private readonly int _count;
@@ -17,7 +17,7 @@ namespace PowerTab.UIElements
 		private readonly float _barFill;
 		private readonly float _parentTabWidth;
 		public IEnumerable<PowerTabThing> Children { get; }
-		private bool _expanded;
+		private readonly bool _expanded;
 		private readonly bool _isBattery;
 		private readonly Action<PowerTabGroup> _ifButtonPressed;
 		private static float SelfHeight => Text.SmallFontHeight + GenUI.GapTiny * 2 + 2;

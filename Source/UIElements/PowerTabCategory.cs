@@ -5,7 +5,7 @@ using Verse;
 
 namespace PowerTab.UIElements
 {
-	public class PowerTabCategory : IDrawableTabElement
+	public class PowerTabCategory
 	{
 		private readonly string _label;
 		private readonly float _power;

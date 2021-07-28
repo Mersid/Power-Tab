@@ -28,10 +28,9 @@ namespace PowerTab
 
 			// Code past this point runs only if the aforementioned compPower element actually contains a CompPower
 			
-			PowerNetElements powerNetElements = new PowerNetElements();
-			List<TestComp> testComps = new List<TestComp>();
+			List<CompPowerTracker> powerTrackers = new List<CompPowerTracker>();
 			
-			// If a single workbench or something that does not have a powernet (i.e. it only connects to one)
+			// If a single workbench or something that does not have a power net (i.e. it only connects to one)
 			// attempts to call any method under compPower.PowerNet will throw a NullReferenceException.
 			// Incidentally, in such a situation, the selected object is the only item it its own "net" (RimWorld does not define it thusly).
 			if (compPower.PowerNet == null)
@@ -44,37 +43,29 @@ namespace PowerTab
 				// Add batteries
 				foreach (CompPowerBattery x in compPower.PowerNet.batteryComps)
 				{
-					powerNetElements.AddBattery(x);
-					Mod.PowerTracker.AddTracker(x);
-				
-					if (x.parent.TryGetComp<TestComp>() == null)
+					if (x.parent.TryGetComp<CompPowerTracker>() == null)
 					{
-						TestComp testComp = new TestComp {parent = x.parent};
-						x.parent.AllComps.Add(testComp);
+						CompPowerTracker compPowerTracker = new CompPowerTracker {parent = x.parent};
+						x.parent.AllComps.Add(compPowerTracker);
 					}
-					testComps.Add(x.parent.TryGetComp<TestComp>());
+					powerTrackers.Add(x.parent.TryGetComp<CompPowerTracker>());
 				}
 				
 			
 				// Add power consumers and producers
 				foreach (CompPowerTrader x in compPower.PowerNet.powerComps)
 				{
-					powerNetElements.AddPowerComponent(x);
-					Mod.PowerTracker.AddTracker(x);
-				
-					if (x.parent.TryGetComp<TestComp>() == null)
+					if (x.parent.TryGetComp<CompPowerTracker>() == null)
 					{
-						TestComp testComp = new TestComp {parent = x.parent};
-						x.parent.AllComps.Add(testComp);
+						CompPowerTracker compPowerTracker = new CompPowerTracker {parent = x.parent};
+						x.parent.AllComps.Add(compPowerTracker);
 					}
-					testComps.Add(x.parent.TryGetComp<TestComp>());
+					powerTrackers.Add(x.parent.TryGetComp<CompPowerTracker>());
 				}
 				
 			}
 			
-
-			Mod.PowerTab.UpdatePowerNetInfo(powerNetElements);
-			Mod.PowerTab.TestComps = testComps;
+			Mod.PowerTab.PowerTrackers = powerTrackers;
 			
 			// Inject the power tab into the display. It is done here instead of in XML
 			// because we need to be able to dynamically resolve items on the power grid at runtime.

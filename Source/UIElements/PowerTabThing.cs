@@ -4,9 +4,9 @@ using Verse;
 
 namespace PowerTab.UIElements
 {
-	public class PowerTabThing : IDrawableTabElement
+	public class PowerTabThing
 	{
-		public Thing _thing { get; } // Represents a battery, producer, or consumer
+		public Thing Thing { get; } // Represents a battery, producer, or consumer
 		public float Power { get; }
 		private readonly float _barFill;
 		private readonly float _parentTabWidth;
@@ -18,15 +18,14 @@ namespace PowerTab.UIElements
 		/// Represents the data needed for drawing to the power tab a single item on the power grid,
 		/// be it any one battery, workbench, light, or whatever else.
 		/// </summary>
-		/// <param name="thing">A battery, producer, or consumer on the power grid. As a rule of thumb,
-		/// if it was passed from <see cref="PowerNetElements"/>, it should work just fine.</param>
+		/// <param name="thing">A battery, producer, or consumer on the power grid.</param>
 		/// <param name="power">How much power to display on the watt display</param>
 		/// <param name="barFill">How much to fill the power bar, between 0 and 1</param>
 		/// <param name="parentTabWidth">How wide the power tab page is</param>
 		/// <param name="isBattery">If it is a battery, display as Wd instead of W</param>
 		public PowerTabThing(Thing thing, float power, float barFill, float parentTabWidth, bool isBattery = false)
 		{
-			_thing = thing;
+			Thing = thing;
 			Power = power;
 			_barFill = barFill;
 			_parentTabWidth = parentTabWidth;
@@ -37,13 +36,13 @@ namespace PowerTab.UIElements
 		{
 			Rect mainRect = new Rect(0, y, _parentTabWidth - GenUI.GapTiny * 3 - GenUI.ScrollBarWidth, GenUI.ListSpacing);
 			Widgets.DrawHighlightIfMouseover(mainRect);
-			if (Widgets.ButtonInvisible(mainRect)) CameraJumper.TryJumpAndSelect(new GlobalTargetInfo(_thing));
+			if (Widgets.ButtonInvisible(mainRect)) CameraJumper.TryJumpAndSelect(new GlobalTargetInfo(Thing));
 
 			Rect iconRect = new Rect(0, y, GenUI.ListSpacing, GenUI.ListSpacing);
-			Widgets.ThingIcon(iconRect, _thing);
+			Widgets.ThingIcon(iconRect, Thing);
 
 			Rect labelRect = new Rect(35, y + 3, _parentTabWidth / 2.5f, Text.SmallFontHeight); // Not dynamic width because area to right contains bar and watt info
-			Widgets.Label(labelRect, _thing.LabelCap);
+			Widgets.Label(labelRect, Thing.LabelCap);
 
 			Rect barRect = new Rect(_parentTabWidth / 2.5f + 40, y, _parentTabWidth / 2 - 25, GenUI.ListSpacing);
 			Widgets.FillableBar(barRect.ContractedBy(2), Mathf.Clamp(_barFill, 0, 1)); 
