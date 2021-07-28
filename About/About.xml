@@ -4,12 +4,18 @@
 	<author>Mersid</author>
 	<packageId>Mersid.PowerTab</packageId>
 	<description>Handy inspector tab for checking the status of your power network.
-	
-	Power tab adds in an inspector tab, selectable on any conduit, which will show the output of every power producer, consumer and battery on the power network.
 
-	This mod requires Harmony. Load it before this mod.
+Power tab adds in an inspector tab, selectable on any conduit, which will show the output of every power producer, consumer and battery on the power network.
 
-	Be sure to inform me if you have any bugs, suggestions, questions or otherwise, I'd love the feedback!
+This mod requires Harmony. Load it before this mod.
+
+Be sure to inform me if you have any bugs, suggestions, questions or otherwise, I'd love the feedback!
+
+This version has been fully rewritten to dynamically resolve power network elements at runtime; this fixes a bug wherein some mods will cause the mod to break.
+
+This version is a re-upload, as the original author appears to have abandoned the project. The original mod can be found at https://steamcommunity.com/sharedfiles/filedetails/?id=1904234465.
+
+Source code available at https://github.com/Mersid/Power-Tab
 	</description>
 
 	<supportedVersions>
