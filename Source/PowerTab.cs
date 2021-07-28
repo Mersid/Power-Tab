@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using PowerTab.UIElements;
 using RimWorld;
@@ -15,6 +16,7 @@ namespace PowerTab
         private float _lastY;
 
         private PowerNetElements _powerNetElements;
+        public List<TestComp> TestComps { get; set; }
 
         private const float LeftMargin = 5;
         private const float RightMargin = 2;
@@ -33,6 +35,7 @@ namespace PowerTab
             InnerSize = new Vector2(size.x - (LeftMargin + RightMargin), size.y - (TopMargin + BottomMargin));
             labelKey = "PowerSwitch_Power";
             _powerNetElements = new PowerNetElements();
+            TestComps = new List<TestComp>();
             _groupCollapsed = new Dictionary<ThingDef, bool>();
         }
 
@@ -41,6 +44,7 @@ namespace PowerTab
             _powerNetElements = powerNetElements;
         }
         
+
         protected override void FillTab()
         {
             Widgets.BeginScrollView(new Rect(
@@ -54,7 +58,58 @@ namespace PowerTab
             
             float y = 10;
             
+            IEnumerable<IGrouping<ThingDef, TestComp>> groups = TestComps.GroupBy(t => t.parent.def);
 
+            // Create a list of PowerTabGroups. Do this instead of using immediately in loop to reduce nesting from categories.
+            // Note that this is a list of every group, with no regard to category.
+            List<PowerTabGroup> powerTabGroups = new List<PowerTabGroup>();
+            foreach (IGrouping<ThingDef, TestComp> group in groups)
+            {
+                // Add dictionary entry to _groupCollapsed if necessary so code doesn't crash from trying to potentially access key that does not exist.
+                if (!_groupCollapsed.ContainsKey(group.Key))
+                    _groupCollapsed[group.Key] = false;
+                
+                // Create a PowerTabThing from every TestComp in a group. Recall that a group consists of every specific thing (ex: every solar panel, every machining table, etc)
+                List<PowerTabThing> things = group.Select(testComp => new PowerTabThing(testComp.parent, testComp.CurrentPowerOutput, testComp.CurrentPowerOutput / testComp.DesiredPowerOutput, InnerSize.x, testComp.PowerType == PowerType.Battery)).ToList();
+
+                // Some notes:
+                // We could probably cache the group.Sum() method call to save time; may want to do it later if time permits.
+                // Groups are guaranteed to contain at least one child element. If it doesn't and we're here, something's gone very wrong.
+                PowerTabGroup powerTabGroup = new PowerTabGroup(
+                    group.First().parent.LabelCap,
+                    group.Count(),
+                    group.Sum(t => t.CurrentPowerOutput),
+                    group.Sum(t => t.CurrentPowerOutput) / group.Sum(t => t.DesiredPowerOutput),
+                    things,
+                    InnerSize.x,
+                    _groupCollapsed[group.Key],
+                    group.First().PowerType == PowerType.Battery,
+                    _ => _groupCollapsed[group.Key] = !_groupCollapsed[group.Key]);
+                powerTabGroups.Add(powerTabGroup);
+            }
+
+            // Creates categories. There should theoretically be no more than the three categories defined in PowerType.cs
+            // This code essentially attempts to obtain the group's PowerType, which is, by its very nature, the same as its component children's PowerType,
+            // so just get the group's first child's powertype.
+            IEnumerable<IGrouping<PowerType, PowerTabGroup>> categories =
+                powerTabGroups.GroupBy(t => t.Children.First()._thing.TryGetComp<TestComp>().PowerType); // :| That looks... fun.
+
+            foreach (IGrouping<PowerType, PowerTabGroup> category in categories)
+            {
+                List<TestComp> testCompsInPowerType = TestComps.Where(t => t.PowerType == category.Key).ToList();
+                PowerTabCategory powerTabCategory = new PowerTabCategory(
+                    category.Key.ToString(),
+                    testCompsInPowerType.Sum(t => t.CurrentPowerOutput),
+                    testCompsInPowerType.Sum(t => t.CurrentPowerOutput) /
+                    testCompsInPowerType.Sum(t => t.DesiredPowerOutput),
+                    powerTabGroups.Where(t => t.Children.First()._thing.TryGetComp<TestComp>().PowerType == category.Key), // Otherwise, each category will render every single group
+                    InnerSize.x,
+                    category.Key == PowerType.Battery);
+                
+                powerTabCategory.Draw(y);
+                y += powerTabCategory.Height;
+            }
+            
             _lastY = y;
             
             Widgets.EndScrollView();

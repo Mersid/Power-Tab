@@ -6,7 +6,7 @@ namespace PowerTab.UIElements
 {
 	public class PowerTabThing : IDrawableTabElement
 	{
-		private readonly Thing _thing; // Represents a battery, producer, or consumer
+		public Thing _thing { get; } // Represents a battery, producer, or consumer
 		private readonly float _power;
 		private readonly float _barFill;
 		private readonly float _parentTabWidth;

@@ -74,6 +74,7 @@
     <Compile Include="PowerTracker\PowerTrackerThing.cs" />
     <Compile Include="PowerType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestComp.cs" />
     <Compile Include="UIElements\IDrawableTabElement.cs" />
     <Compile Include="UIElements\PowerTabCategory.cs" />
     <Compile Include="UIElements\PowerTabGroup.cs" />

@@ -16,12 +16,12 @@ namespace PowerTab.UIElements
 		private readonly float _power;
 		private readonly float _barFill;
 		private readonly float _parentTabWidth;
-		private IEnumerable<PowerTabThing> _children;
+		public IEnumerable<PowerTabThing> Children { get; }
 		private bool _expanded;
 		private readonly bool _isBattery;
 		private readonly Action<PowerTabGroup> _ifButtonPressed;
 		private static float SelfHeight => Text.SmallFontHeight + GenUI.GapTiny * 2 + 2;
-		public float Height => SelfHeight + (_expanded ? _children.Sum(t => t.Height) : 1); // Note: No width since we're only really drawing down; the width is fixed.
+		public float Height => SelfHeight + (_expanded ? Children.Sum(t => t.Height) : 1); // Note: No width since we're only really drawing down; the width is fixed.
 
 		/// <summary>
 		/// Represents the data needed for drawing to the power tab an entire group of the same thing,
@@ -46,7 +46,7 @@ namespace PowerTab.UIElements
 			_expanded = expanded;
 			_isBattery = isBattery;
 			_ifButtonPressed = ifButtonPressed;
-			_children = children;
+			Children = children;
 		}
 		
 		public void Draw(float y)
@@ -76,7 +76,7 @@ namespace PowerTab.UIElements
 			y += SelfHeight;
 
 			if (!_expanded) return;
-			foreach (PowerTabThing powerTabThing in _children)
+			foreach (PowerTabThing powerTabThing in Children)
 			{
 				powerTabThing.Draw(y);
 				y += powerTabThing.Height;

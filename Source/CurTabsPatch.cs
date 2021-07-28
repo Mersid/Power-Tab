@@ -29,12 +29,20 @@ namespace PowerTab
 			// Code past this point runs only if the aforementioned compPower element actually contains a CompPower
 			
 			PowerNetElements powerNetElements = new PowerNetElements();
+			List<TestComp> testComps = new List<TestComp>();
 
 			// Add batteries
 			foreach (CompPowerBattery x in compPower.PowerNet.batteryComps)
 			{
 				powerNetElements.AddBattery(x);
 				Mod.PowerTracker.AddTracker(x);
+				
+				if (x.parent.TryGetComp<TestComp>() == null)
+				{
+					TestComp testComp = new TestComp {parent = x.parent};
+					x.parent.AllComps.Add(testComp);
+				}
+				testComps.Add(x.parent.TryGetComp<TestComp>());
 			}
 				
 			
@@ -43,10 +51,18 @@ namespace PowerTab
 			{
 				powerNetElements.AddPowerComponent(x);
 				Mod.PowerTracker.AddTracker(x);
+				
+				if (x.parent.TryGetComp<TestComp>() == null)
+				{
+					TestComp testComp = new TestComp {parent = x.parent};
+					x.parent.AllComps.Add(testComp);
+				}
+				testComps.Add(x.parent.TryGetComp<TestComp>());
 			}
 
 			Mod.PowerTab.UpdatePowerNetInfo(powerNetElements);
-			Log.Message(Mod.PowerTracker.ToString());
+			Mod.PowerTab.TestComps = testComps;
+			
 			// Inject the power tab into the display. It is done here instead of in XML
 			// because we need to be able to dynamically resolve items on the power grid at runtime.
 			// Some mods have their own defs for Things that provide or consume power, so we can't patch them in XML
