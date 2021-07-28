@@ -33,15 +33,21 @@ namespace PowerTab
 
 		/// <summary>
 		/// Gets the current power output. Negative values means that the tracked item is consuming power.
-		/// If the tracked item is a battery or otherwise has no power type (a glitch), this always returns 0
+		/// If the tracked item is a battery, this returns the Wd of power in the battery.
+		/// It's not technically correct, but it reduces the amount of code needed further down
+		/// to discern and call a separate function for that.
+		/// If the tracked item has no power type (a glitch), this returns 0
 		/// </summary>
 		public float CurrentPowerOutput
 		{
 			get
 			{
-				if (PowerType is PowerType.Consumer or PowerType.Producer)
-					return parent.GetComp<CompPowerTrader>().PowerOutput;
-				return 0;
+				return PowerType switch
+				{
+					PowerType.Consumer or PowerType.Producer => parent.GetComp<CompPowerTrader>().PowerOutput,
+					PowerType.Battery => parent.GetComp<CompPowerBattery>().StoredEnergy,
+					_ => 0
+				};
 			}
 		}
 
@@ -51,15 +57,19 @@ namespace PowerTab
 		
 		/// <summary>
 		/// Gets the desired power output. Negative values means that the tracked item is consuming power.
-		/// If the tracked item is a battery or otherwise has no power type (a glitch), this always returns 0.
+		/// If the tracked item is a battery, this returns the maximum Wd of power the battery can store.
+		/// If the tracked item has no power type (a glitch), this returns 0.
 		/// </summary>
 		public float DesiredPowerOutput
 		{
 			get
 			{
-				if (PowerType is PowerType.Consumer or PowerType.Producer)
-					return Mathf.Max(-parent.GetComp<CompPowerTrader>().Props.basePowerConsumption, _maxObservedPowerOutput);
-				return 0;
+				return PowerType switch
+				{
+					PowerType.Consumer or PowerType.Producer => Mathf.Max(-parent.GetComp<CompPowerTrader>().Props.basePowerConsumption, _maxObservedPowerOutput),
+					PowerType.Battery => parent.GetComp<CompPowerBattery>().Props.storedEnergyMax,
+					_ => 0
+				};
 			}
 		}
 

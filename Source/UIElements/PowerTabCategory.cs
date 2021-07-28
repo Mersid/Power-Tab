@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using Verse;
 
 namespace PowerTab.UIElements
@@ -12,7 +13,7 @@ namespace PowerTab.UIElements
 		private readonly IEnumerable<PowerTabGroup> _children;
 		private readonly float _parentTabWidth;
 		private readonly bool _isBattery;
-		public float Height => 25 /*List separator height*/ + _children.Sum(t => t.Height);
+		public float Height => 25 /*List separator height*/ + _children.Sum(t => t.Height) + 8;
 
 		/// <summary>
 		/// Represents the drawing of an entire category on the power tab, such as every battery, every producer, or every power consumer in the grid.
@@ -36,6 +37,19 @@ namespace PowerTab.UIElements
 		public void Draw(float y)
 		{
 			Widgets.ListSeparator(ref y, _parentTabWidth, _label); // y += 25 from ref
+			
+			Rect barRect = new Rect(_parentTabWidth / 4.5f + 40, y - 30, _parentTabWidth / 1.45f - 25, GenUI.ListSpacing);
+			Widgets.FillableBar(barRect.ContractedBy(2), Mathf.Clamp(_barFill, 0, 1)); 
+			
+			string powerDrawStr = $"{_power} " + (_isBattery ? "Wd" : "W");
+			float textWidth = Text.CalcSize(powerDrawStr).x; // Calculate here instead of using cache since the numbers can change fast, and the cache can become outdated, leading to minor graphical issues.
+			
+			Rect wattBkgRect = new Rect(_parentTabWidth / 4.5f + 40, y - 30, textWidth + 16, GenUI.ListSpacing);
+			Widgets.DrawRectFast(wattBkgRect.ContractedBy(GenUI.GapTiny * 1.5f), Color.black);
+
+			Rect wattLabelRect = new Rect(wattBkgRect.x + 6, y - 26, textWidth /*Small buffer to prevent potential overflow*/, GenUI.ListSpacing);
+			Widgets.Label(wattLabelRect, powerDrawStr);
+			
 			foreach (PowerTabGroup child in _children)
 			{
 				child.Draw(y);
