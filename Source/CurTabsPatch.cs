@@ -30,35 +30,48 @@ namespace PowerTab
 			
 			PowerNetElements powerNetElements = new PowerNetElements();
 			List<TestComp> testComps = new List<TestComp>();
-
-			// Add batteries
-			foreach (CompPowerBattery x in compPower.PowerNet.batteryComps)
+			
+			// If a single workbench or something that does not have a powernet (i.e. it only connects to one)
+			// attempts to call any method under compPower.PowerNet will throw a NullReferenceException.
+			// Incidentally, in such a situation, the selected object is the only item it its own "net" (RimWorld does not define it thusly).
+			if (compPower.PowerNet == null)
 			{
-				powerNetElements.AddBattery(x);
-				Mod.PowerTracker.AddTracker(x);
-				
-				if (x.parent.TryGetComp<TestComp>() == null)
-				{
-					TestComp testComp = new TestComp {parent = x.parent};
-					x.parent.AllComps.Add(testComp);
-				}
-				testComps.Add(x.parent.TryGetComp<TestComp>());
+				// We could optionally add the lone power item here, but since it's alone with no means of power generation,
+				// we can skip this without much ill effect.
 			}
+			else
+			{
+				// Add batteries
+				foreach (CompPowerBattery x in compPower.PowerNet.batteryComps)
+				{
+					powerNetElements.AddBattery(x);
+					Mod.PowerTracker.AddTracker(x);
+				
+					if (x.parent.TryGetComp<TestComp>() == null)
+					{
+						TestComp testComp = new TestComp {parent = x.parent};
+						x.parent.AllComps.Add(testComp);
+					}
+					testComps.Add(x.parent.TryGetComp<TestComp>());
+				}
 				
 			
-			// Add power consumers and producers
-			foreach (CompPowerTrader x in compPower.PowerNet.powerComps)
-			{
-				powerNetElements.AddPowerComponent(x);
-				Mod.PowerTracker.AddTracker(x);
-				
-				if (x.parent.TryGetComp<TestComp>() == null)
+				// Add power consumers and producers
+				foreach (CompPowerTrader x in compPower.PowerNet.powerComps)
 				{
-					TestComp testComp = new TestComp {parent = x.parent};
-					x.parent.AllComps.Add(testComp);
+					powerNetElements.AddPowerComponent(x);
+					Mod.PowerTracker.AddTracker(x);
+				
+					if (x.parent.TryGetComp<TestComp>() == null)
+					{
+						TestComp testComp = new TestComp {parent = x.parent};
+						x.parent.AllComps.Add(testComp);
+					}
+					testComps.Add(x.parent.TryGetComp<TestComp>());
 				}
-				testComps.Add(x.parent.TryGetComp<TestComp>());
+				
 			}
+			
 
 			Mod.PowerTab.UpdatePowerNetInfo(powerNetElements);
 			Mod.PowerTab.TestComps = testComps;
