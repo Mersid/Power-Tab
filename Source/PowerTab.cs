@@ -80,7 +80,7 @@ namespace PowerTab
                     .ToList();
                 
                 // Sort things in a group
-                things.SortByDescending(t => t.Power);
+                things.SortByDescending(t => Mathf.Abs(t.Power));
 
                 // Some notes:
                 // We could probably cache the group.Sum() method call to save time; may want to do it later if time permits.
@@ -99,7 +99,7 @@ namespace PowerTab
             }
             
             // Sort groups in a category
-            powerTabGroups.SortByDescending(t => t.Power);
+            powerTabGroups.SortByDescending(t => Mathf.Abs(t.Power));
 
             // Creates categories. There should theoretically be no more than the three categories defined in PowerType.cs
             // This code essentially attempts to obtain the group's PowerType, which is, by its very nature, the same as its component children's PowerType,
