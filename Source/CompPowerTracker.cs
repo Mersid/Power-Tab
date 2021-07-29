@@ -14,7 +14,7 @@ namespace PowerTab
 		{
 			// For things like solar panels and other dynamically-adjusted power generators, retrieving from Props.basePowerConsumption
 			// may not return the proper value (ex: solar panels return -1). This helps alleviate that over time.
-			if (CurrentPowerOutput > _maxObservedPowerOutput)
+			if (CurrentPowerOutput > _maxObservedPowerOutput && PowerType == PowerType.Producer) // It should only apply to producers like solar panels
 				_maxObservedPowerOutput = CurrentPowerOutput;
 		}
 
