@@ -6,8 +6,9 @@ using Verse;
 
 namespace PowerTab
 {
-	[HarmonyPatch(typeof(ThingMaker),"MakeThing")]
-	[UsedImplicitly] // by Harmony
+	// I'm not really quite sure what this is doing here...
+	//[HarmonyPatch(typeof(ThingMaker),"MakeThing")]
+	//[UsedImplicitly] // by Harmony
 	public class ThingMakerPatch
 	{
 		private static void Postfix(ref Thing __result)

@@ -57,31 +57,13 @@ namespace PowerTab
 		/// If the tracked item is a battery, this returns the maximum Wd of power the battery can store.
 		/// If the tracked item has no power type (a glitch), this returns 0.
 		/// </summary>
-		public float DesiredPowerOutput
-		{
-			get
-			{
-				return PowerType switch
-				{
-					PowerType.Consumer or PowerType.Producer => Mathf.Max(-parent.GetComp<CompPowerTrader>().Props.basePowerConsumption, _maxObservedPowerOutput),
-					PowerType.Battery => parent.GetComp<CompPowerBattery>().Props.storedEnergyMax,
-					_ => 0
-				};
-			}
-		}
+		public float DesiredPowerOutput =>
+			parent.TryGetComp<CompPower>() is CompPowerBattery ? parent.GetComp<CompPowerBattery>().Props.storedEnergyMax : 
+			Mathf.Max(-parent.GetComp<CompPowerTrader>().Props.basePowerConsumption, _maxObservedPowerOutput);
 
-		public PowerType PowerType
-		{
-			get
-			{
-				return parent.TryGetComp<CompPower>() switch
-				{
-					CompPowerBattery => PowerType.Battery,
-					CompPowerPlant => PowerType.Producer,
-					CompPowerTrader => PowerType.Consumer,
-					_ => throw new ArgumentOutOfRangeException($"Could not deduce power type for {parent.TryGetComp<CompPower>().parent.LabelCap}")
-				};
-			}
-		}
+		public PowerType PowerType =>
+			parent.TryGetComp<CompPower>() is CompPowerBattery ? PowerType.Battery :
+			DesiredPowerOutput >= 0 ? PowerType.Producer :
+			PowerType.Consumer;
 	}
 }

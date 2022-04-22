@@ -12,7 +12,7 @@ namespace PowerTab
 		static Mod() // Mod entrypoint
 		{
 			PowerTab = new PowerTab();
-			Harmony harmony = new Harmony("net.mersid.powertab");
+			Harmony harmony = new Harmony("com.mersid.powertab");
 			harmony.PatchAll();
 		}
 	}
