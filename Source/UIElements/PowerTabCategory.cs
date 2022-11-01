@@ -13,7 +13,7 @@ namespace PowerTab.UIElements
 		private readonly IEnumerable<PowerTabGroup> _children;
 		private readonly float _parentTabWidth;
 		private readonly bool _isBattery;
-		public float Height => 25 /*List separator height*/ + _children.Sum(t => t.Height) + 8;
+		public float Height => 25 /*List separator height*/ + _children.Sum(t => t.Height) + 11;
 
 		/// <summary>
 		/// Represents the drawing of an entire category on the power tab, such as every battery, every producer, or every power consumer in the grid.
@@ -52,7 +52,7 @@ namespace PowerTab.UIElements
 			
 			foreach (PowerTabGroup child in _children)
 			{
-				child.Draw(y);
+				child.Draw(y + 3);
 				y += child.Height;
 			}
 		}

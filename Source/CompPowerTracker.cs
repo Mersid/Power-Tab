@@ -59,7 +59,7 @@ namespace PowerTab
 		/// </summary>
 		public float DesiredPowerOutput =>
 			parent.TryGetComp<CompPower>() is CompPowerBattery ? parent.GetComp<CompPowerBattery>().Props.storedEnergyMax : 
-			Mathf.Max(-parent.GetComp<CompPowerTrader>().Props.basePowerConsumption, _maxObservedPowerOutput);
+			Mathf.Max(-parent.GetComp<CompPowerTrader>().Props.PowerConsumption, _maxObservedPowerOutput);
 
 		public PowerType PowerType =>
 			parent.TryGetComp<CompPower>() is CompPowerBattery ? PowerType.Battery :

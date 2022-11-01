@@ -51,26 +51,26 @@ namespace PowerTab.UIElements
 		
 		public void Draw(float y)
 		{
-			Rect mainRect = new Rect(0, y, _parentTabWidth - GenUI.GapTiny * 3 - GenUI.ScrollBarWidth, Text.SmallFontHeight + GenUI.GapTiny * 2);
+			Rect mainRect = new Rect(3, y, _parentTabWidth - GenUI.GapTiny * 3 - GenUI.ScrollBarWidth, Text.SmallFontHeight + GenUI.GapTiny * 2);
 			Widgets.DrawOptionSelected(mainRect);
 			
-			Rect buttonRect = new Rect(2, y + 1, GenUI.ListSpacing, GenUI.ListSpacing);
+			Rect buttonRect = new Rect(5, y + 1, GenUI.ListSpacing, GenUI.ListSpacing);
 			if (Widgets.ButtonText(buttonRect.ContractedBy(2), _expanded ? "-" : "+"))
 				_ifButtonPressed.Invoke(this);
 
-			Rect labelRect = new Rect(35, y + 4, _parentTabWidth / 2.5f, Text.SmallFontHeight);
+			Rect labelRect = new Rect(38, y + 4, _parentTabWidth / 2.5f, Text.SmallFontHeight);
 			Widgets.Label(labelRect, $"{_count} {_label}");
 			
-			Rect barRect = new Rect(_parentTabWidth / 2.5f + 40, y + 1, _parentTabWidth / 2 - 25, GenUI.ListSpacing);
+			Rect barRect = new Rect(_parentTabWidth / 2.5f + 43, y + 1, _parentTabWidth / 2 - 25, GenUI.ListSpacing);
 			Widgets.FillableBar(barRect.ContractedBy(2), Mathf.Clamp(_barFill, 0, 1)); 
 			
 			string powerDrawStr = $"{Power} " + (_isBattery ? "Wd" : "W");
 			float textWidth = Text.CalcSize(powerDrawStr).x; // Calculate here instead of using cache since the numbers can change fast, and the cache can become outdated, leading to minor graphical issues.
 			
-			Rect wattBkgRect = new Rect(_parentTabWidth / 2.5f + 40, y + 1, textWidth + 16, GenUI.ListSpacing);
+			Rect wattBkgRect = new Rect(_parentTabWidth / 2.5f + 43, y + 1, textWidth + 16, GenUI.ListSpacing);
 			Widgets.DrawRectFast(wattBkgRect.ContractedBy(GenUI.GapTiny * 1.5f), Color.black);
 
-			Rect wattLabelRect = new Rect(wattBkgRect.x + 6, y + 5, textWidth /*Small buffer to prevent potential overflow*/, GenUI.ListSpacing);
+			Rect wattLabelRect = new Rect(wattBkgRect.x + 9, y + 5, textWidth /*Small buffer to prevent potential overflow*/, GenUI.ListSpacing);
 			Widgets.Label(wattLabelRect, powerDrawStr);
 
 			y += SelfHeight;
