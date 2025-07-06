@@ -1,4 +1,5 @@
-﻿using RimWorld.Planet;
+﻿using RimWorld;
+using RimWorld.Planet;
 using UnityEngine;
 using Verse;
 
@@ -36,7 +37,12 @@ namespace PowerTab.UIElements
 		{
 			Rect mainRect = new Rect(0, y, _parentTabWidth - GenUI.GapTiny * 3 - GenUI.ScrollBarWidth, GenUI.ListSpacing);
 			Widgets.DrawHighlightIfMouseover(mainRect);
-			if (Widgets.ButtonInvisible(mainRect)) CameraJumper.TryJumpAndSelect(new GlobalTargetInfo(Thing));
+
+			if (Mouse.IsOver(mainRect))
+				TargetHighlighter.Highlight(Thing);
+
+			if (Widgets.ButtonInvisible(mainRect))
+				CameraJumper.TryJumpAndSelect(new GlobalTargetInfo(Thing));
 
 			Rect iconRect = new Rect(0, y, GenUI.ListSpacing, GenUI.ListSpacing);
 			Widgets.ThingIcon(iconRect, Thing);
