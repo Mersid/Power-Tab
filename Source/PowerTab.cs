@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+﻿using System.Diagnostics;
 using System.Linq;
 using PowerTab.UIElements;
 using RimWorld;
@@ -13,7 +14,13 @@ namespace PowerTab
     {
         private Vector2 _scrollPos;
         private float _lastY;
-        public List<CompPowerTracker> PowerTrackers { get; set; }
+        private Stopwatch _lastBuild = new();
+        private List<CompPowerTracker> PowerTrackers = [];
+        /// <summary>
+        /// The currently inspected powered thing.
+        /// Used to build PowerTrackers.
+        /// </summary>
+        public CompPower Tracking = null;
 
         private const float LeftMargin = 5;
         private const float RightMargin = 2;
@@ -31,9 +38,61 @@ namespace PowerTab
             size = new Vector2(450f, 450f);
             InnerSize = new Vector2(size.x - (LeftMargin + RightMargin), size.y - (TopMargin + BottomMargin));
             labelKey = "PowerSwitch_Power";
-            PowerTrackers = new List<CompPowerTracker>();
             _groupCollapsed = new Dictionary<ThingDef, bool>();
         }
+
+        /// <summary>
+        /// If the trackers are empty or last calculated a second ago, rebuilds them.
+        /// </summary>
+        public void UpdateTrackers()
+        {
+            if (PowerTrackers.Count == 0 || _lastBuild.Elapsed.TotalSeconds > 1)
+                BuildTrackers();
+        }
+
+        private void BuildTrackers()
+        {
+            if (Tracking == null)
+                return;
+
+            _lastBuild.Restart();
+
+			PowerTrackers.Clear();
+
+			// If a single workbench or something that does not have a power net (i.e. it only connects to one)
+			// attempts to call any method under compPower.PowerNet will throw a NullReferenceException.
+			// Incidentally, in such a situation, the selected object is the only item it its own "net" (RimWorld does not define it thusly).
+			if (Tracking.PowerNet == null)
+			{
+				// We could optionally add the lone power item here, but since it's alone with no means of power generation,
+				// we can skip this without much ill effect.
+			}
+			else
+			{
+				// Add batteries
+				foreach (CompPowerBattery x in Tracking.PowerNet.batteryComps)
+				{
+					AddTracker(x.parent);
+				}
+
+				// Add power consumers and producers
+				foreach (CompPowerTrader x in Tracking.PowerNet.powerComps)
+				{
+					AddTracker(x.parent);
+				}
+			}
+		}
+
+		private void AddTracker(ThingWithComps thing)
+		{
+			CompPowerTracker tracker = thing.TryGetComp<CompPowerTracker>();
+			if (tracker == null)
+			{
+				tracker = new CompPowerTracker {parent = thing};
+				thing.AllComps.Add(tracker);
+			}
+			PowerTrackers.Add(tracker);
+		}
         
         protected override void FillTab()
         {
@@ -47,7 +106,7 @@ namespace PowerTab
             );
             
             float y = 10;
-            
+            UpdateTrackers();
             IEnumerable<IGrouping<ThingDef, CompPowerTracker>> groups = PowerTrackers.GroupBy(t => t.parent.def);
 
             // Create a list of PowerTabGroups. Do this instead of using immediately in loop to reduce nesting from categories.
