@@ -25,7 +25,7 @@ namespace PowerTab
 			if (compPower is null)
 				return;
 
-			// this can be called many times per frame but will only do anything if it gets out of date
+			// This can be called many times per frame but will only do anything if it gets out of date
 			Mod.PowerTab.Tracking = compPower;
 			Mod.PowerTab.UpdateTrackers();
 

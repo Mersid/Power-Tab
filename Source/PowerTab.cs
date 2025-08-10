@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Linq;
 using PowerTab.UIElements;
 using RimWorld;
@@ -13,32 +13,39 @@ namespace PowerTab
     public class PowerTab : ITab
     {
         private Vector2 _scrollPos;
-        private float _lastY;
-        private Stopwatch _lastBuild = new();
-        private List<CompPowerTracker> PowerTrackers = [];
+        private float LastY { get; set; }
+        private Stopwatch LastBuild { get; } = new Stopwatch();
+        private List<CompPowerTracker> PowerTrackers { get; } = [];
+
         /// <summary>
         /// The currently inspected powered thing.
         /// Used to build PowerTrackers.
         /// </summary>
-        public CompPower Tracking = null;
+        public CompPower? Tracking { get; set; }
 
         private const float LeftMargin = 5;
         private const float RightMargin = 2;
         private const float TopMargin = 30;
         private const float BottomMargin = 5;
 
-        private Vector2 InnerSize { get; } // Size of the scrollable portion of the tab display. It is the size, minus the margins.
-        private readonly Dictionary<ThingDef, bool> _groupCollapsed; // PowerTab* are drawable elements and shouldn't contain state, so we'll put the collapsed tracker here.
-                                                                      // Since PowerTab* elements are recreated each tick, store them as a dict with a CompPower as the key, since they persist.
-                                                                      // In the context of groups, it is safe to reference them by type since all instances will be in the same group.
-                                                                      
-        
+        /// <summary>
+        /// Size of the scrollable portion of the tab display. It is the size, minus the margins.
+        /// </summary>
+        private Vector2 InnerSize { get; }
+
+        /// <summary>
+        /// PowerTab* are drawable elements and shouldn't contain state, so we'll put the collapsed tracker here.
+        /// Since PowerTab* elements are recreated each tick, store them as a dict with a CompPower as the key, since they persist.
+        /// In the context of groups, it is safe to reference them by type since all instances will be in the same group.
+        /// </summary>
+        private Dictionary<ThingDef, bool> GroupCollapsed { get; } = new Dictionary<ThingDef, bool>();
+
+
         public PowerTab()
         {
             size = new Vector2(450f, 450f);
             InnerSize = new Vector2(size.x - (LeftMargin + RightMargin), size.y - (TopMargin + BottomMargin));
             labelKey = "PowerSwitch_Power";
-            _groupCollapsed = new Dictionary<ThingDef, bool>();
         }
 
         /// <summary>
@@ -46,7 +53,7 @@ namespace PowerTab
         /// </summary>
         public void UpdateTrackers()
         {
-            if (PowerTrackers.Count == 0 || _lastBuild.Elapsed.TotalSeconds > 1)
+            if (PowerTrackers.Count == 0 || LastBuild.Elapsed.TotalSeconds > 1)
                 BuildTrackers();
         }
 
@@ -55,7 +62,7 @@ namespace PowerTab
             if (Tracking == null)
                 return;
 
-            _lastBuild.Restart();
+            LastBuild.Restart();
 
 			PowerTrackers.Clear();
 
@@ -101,7 +108,7 @@ namespace PowerTab
                     new Vector2(InnerSize.x, InnerSize.y)).ContractedBy(GenUI.GapTiny), // Defines the outer (fixed) view - the viewport.
                                                                                             // Size vector is subtracted by margins so opposite end doesnt fall off screen.
                 ref _scrollPos,
-                new Rect(default, new Vector2(InnerSize.x - GenUI.GapTiny * 2 - GenUI.ScrollBarWidth, _lastY)) // Defines the inner, scrollable, view. 
+                new Rect(default, new Vector2(InnerSize.x - GenUI.GapTiny * 2 - GenUI.ScrollBarWidth, LastY)) // Defines the inner, scrollable, view.
                                                                                                                                      // When bigger than outRect, scroll bars appear for navigation.
             );
             
@@ -115,8 +122,8 @@ namespace PowerTab
             foreach (IGrouping<ThingDef, CompPowerTracker> group in groups)
             {
                 // Add dictionary entry to _groupCollapsed if necessary so code doesn't crash from trying to potentially access key that does not exist.
-                if (!_groupCollapsed.ContainsKey(group.Key))
-                    _groupCollapsed[group.Key] = false;
+                if (!GroupCollapsed.ContainsKey(group.Key))
+                    GroupCollapsed[group.Key] = false;
                 
                 // Create a PowerTabThing from every CompPowerTracker in a group. Recall that a group consists of every specific thing (ex: every solar panel, every machining table, etc)
                 List<PowerTabThing> things = group.Select(
@@ -141,9 +148,9 @@ namespace PowerTab
                     group.Sum(t => t.CurrentPowerOutput) / group.Sum(t => t.DesiredPowerOutput),
                     things,
                     InnerSize.x,
-                    _groupCollapsed[group.Key],
+                    GroupCollapsed[group.Key],
                     group.First().PowerType == PowerType.Battery,
-                    _ => _groupCollapsed[group.Key] = !_groupCollapsed[group.Key]);
+                    _ => GroupCollapsed[group.Key] = !GroupCollapsed[group.Key]);
                 powerTabGroups.Add(powerTabGroup);
             }
             
@@ -174,7 +181,7 @@ namespace PowerTab
                 y += powerTabCategory.Height;
             }
             
-            _lastY = y;
+            LastY = y;
             
             Widgets.EndScrollView();
             
