@@ -59,7 +59,7 @@ namespace PowerTab
 
         private void BuildTrackers()
         {
-            if (Tracking == null)
+            if (Tracking is null)
                 return;
 
             LastBuild.Restart();
@@ -69,7 +69,7 @@ namespace PowerTab
 			// If a single workbench or something that does not have a power net (i.e. it only connects to one)
 			// attempts to call any method under compPower.PowerNet will throw a NullReferenceException.
 			// Incidentally, in such a situation, the selected object is the only item it its own "net" (RimWorld does not define it thusly).
-			if (Tracking.PowerNet == null)
+			if (Tracking.PowerNet is null)
 			{
 				// We could optionally add the lone power item here, but since it's alone with no means of power generation,
 				// we can skip this without much ill effect.
@@ -93,7 +93,7 @@ namespace PowerTab
 		private void AddTracker(ThingWithComps thing)
 		{
 			CompPowerTracker tracker = thing.TryGetComp<CompPowerTracker>();
-			if (tracker == null)
+			if (tracker is null)
 			{
 				tracker = new CompPowerTracker {parent = thing};
 				thing.AllComps.Add(tracker);
