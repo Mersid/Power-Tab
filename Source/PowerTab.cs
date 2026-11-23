@@ -57,6 +57,9 @@ namespace PowerTab
                 BuildTrackers();
         }
 
+        private static float GetBarFill(float power, float desiredPower) =>
+            desiredPower == 0f ? 0f : power / desiredPower;
+
         private void BuildTrackers()
         {
             if (Tracking is null)
@@ -130,7 +133,7 @@ namespace PowerTab
                     tracker => new PowerTabThing(
                         tracker.parent, 
                         tracker.CurrentPowerOutput, 
-                        tracker.CurrentPowerOutput / tracker.DesiredPowerOutput, 
+                        GetBarFill(tracker.CurrentPowerOutput, tracker.DesiredPowerOutput),
                         InnerSize.x, 
                         tracker.PowerType == PowerType.Battery))
                     .ToList();
@@ -141,11 +144,13 @@ namespace PowerTab
                 // Some notes:
                 // We could probably cache the group.Sum() method call to save time; may want to do it later if time permits.
                 // Groups are guaranteed to contain at least one child element. If it doesn't and we're here, something's gone very wrong.
+                float groupPower = group.Sum(t => t.CurrentPowerOutput);
+                float groupDesiredPower = group.Sum(t => t.DesiredPowerOutput);
                 PowerTabGroup powerTabGroup = new PowerTabGroup(
                     group.First().parent.def.LabelCap, // Def labels do not have modifiers like damage appended to it.
                     group.Count(),
-                    group.Sum(t => t.CurrentPowerOutput),
-                    group.Sum(t => t.CurrentPowerOutput) / group.Sum(t => t.DesiredPowerOutput),
+                    groupPower,
+                    GetBarFill(groupPower, groupDesiredPower),
                     things,
                     InnerSize.x,
                     GroupCollapsed[group.Key],
@@ -168,11 +173,12 @@ namespace PowerTab
             foreach (IGrouping<PowerType, PowerTabGroup> category in categories)
             {
                 List<CompPowerTracker> powerTrackersOfType = PowerTrackers.Where(t => t.PowerType == category.Key).ToList();
+                float categoryPower = powerTrackersOfType.Sum(t => t.CurrentPowerOutput);
+                float categoryDesiredPower = powerTrackersOfType.Sum(t => t.DesiredPowerOutput);
                 PowerTabCategory powerTabCategory = new PowerTabCategory(
                     category.Key.ToString(),
-                    powerTrackersOfType.Sum(t => t.CurrentPowerOutput),
-                    powerTrackersOfType.Sum(t => t.CurrentPowerOutput) /
-                    powerTrackersOfType.Sum(t => t.DesiredPowerOutput),
+                    categoryPower,
+                    GetBarFill(categoryPower, categoryDesiredPower),
                     powerTabGroups.Where(t => t.Children.First().Thing.TryGetComp<CompPowerTracker>().PowerType == category.Key), // Otherwise, each category will render every single group
                     InnerSize.x,
                     category.Key == PowerType.Battery);

@@ -15,13 +15,17 @@ namespace PowerTab
 	[UsedImplicitly] // by Harmony
 	public class CurTabsPatch
 	{
-		private static void Postfix(InspectTabBase __instance, ref IEnumerable<InspectTabBase> __result)
+		[UsedImplicitly]
+		private static void Postfix(ref IEnumerable<InspectTabBase>? __result)
 		{
+			if (Find.ScreenshotModeHandler.Active)
+				return;
+
 			Thing selectedThing = Find.Selector.SingleSelectedThing; // Is null if more than one item was selected.
 
 			//Note that sometimes, this patch runs a few times even after deselecting an item. selectedThing will be null, which will end the patch with no harm done.
 
-			CompPower compPower = (selectedThing as ThingWithComps)?.TryGetComp<CompPower>();
+			CompPower? compPower = (selectedThing as ThingWithComps)?.TryGetComp<CompPower>();
 			if (compPower is null)
 				return;
 
@@ -33,7 +37,7 @@ namespace PowerTab
 			// because we need to be able to dynamically resolve items on the power grid at runtime.
 			// Some mods have their own defs for Things that provide or consume power, so we can't patch them in XML
 			// unless we want to hunt down every mod that does this.
-			__result = __result.AddItem(Mod.PowerTab);
+			__result = __result is null ? [Mod.PowerTab] : __result.AddItem(Mod.PowerTab);
 		}
 	}
 }

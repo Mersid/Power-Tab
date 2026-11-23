@@ -13,7 +13,7 @@ namespace PowerTab
 		{
 			PowerTab = new PowerTab();
 			Harmony harmony = new Harmony("com.mersid.powertab");
-			harmony.PatchAll();
+			harmony.PatchAll(typeof(Mod).Assembly);
 		}
 	}
 }
