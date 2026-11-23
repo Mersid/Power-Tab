@@ -19,7 +19,7 @@ namespace PowerTab.UIElements
 		public IEnumerable<PowerTabThing> Children { get; }
 		private readonly bool _expanded;
 		private readonly bool _isBattery;
-		private readonly Action<PowerTabGroup> _ifButtonPressed;
+		private readonly Action<PowerTabGroup>? _ifButtonPressed;
 		private static float SelfHeight => Text.SmallFontHeight + GenUI.GapTiny * 2 + 2;
 		public float Height => SelfHeight + (_expanded ? Children.Sum(t => t.Height) : 1); // Note: No width since we're only really drawing down; the width is fixed.
 
@@ -36,7 +36,7 @@ namespace PowerTab.UIElements
 		/// <param name="expanded">Whether to draw this group with its children or not</param>
 		/// <param name="isBattery">If it is a battery, display as Wd instead of W</param>
 		/// <param name="ifButtonPressed">A callback that runs if the expand button on the side is pressed. Returns the <see cref="PowerTabGroup"/> that it is called from</param>
-		public PowerTabGroup(string label, int count, float power, float barFill, IEnumerable<PowerTabThing> children, float parentTabWidth, bool expanded, bool isBattery = false,  Action<PowerTabGroup> ifButtonPressed = null)
+		public PowerTabGroup(string label, int count, float power, float barFill, IEnumerable<PowerTabThing> children, float parentTabWidth, bool expanded, bool isBattery = false,  Action<PowerTabGroup>? ifButtonPressed = null)
 		{
 			_label = label;
 			_count = count;
@@ -56,7 +56,7 @@ namespace PowerTab.UIElements
 			
 			Rect buttonRect = new Rect(5, y + 1, GenUI.ListSpacing, GenUI.ListSpacing);
 			if (Widgets.ButtonText(buttonRect.ContractedBy(2), _expanded ? "-" : "+"))
-				_ifButtonPressed.Invoke(this);
+				_ifButtonPressed?.Invoke(this);
 
 			Rect labelRect = new Rect(38, y + 4, _parentTabWidth / 2.5f, Text.SmallFontHeight);
 			Widgets.Label(labelRect, $"{_count} {_label}");
